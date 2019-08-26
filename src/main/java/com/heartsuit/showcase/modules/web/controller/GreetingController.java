@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1")
 public class GreetingController {
+
     private RoomService roomService;
     private TenantService tenantService;
     private IMailService iMailService;
@@ -30,46 +31,6 @@ public class GreetingController {
     }
 
     /**
-     * 新增订单
-     * @param rentOrder 订单信息
-     */
-    @RequestMapping(value = "/rentOrder/insert", method = RequestMethod.POST)
-    @ResponseBody
-    public void insert(@RequestBody RentOrder rentOrder) {
-        rentOrderService.insert(rentOrder);
-    }
-
-    /**
-     * 查询所有订单信息
-     * @return 所有房间信息
-     */
-    @RequestMapping(value = "/rentOrder/queryAll", method = RequestMethod.GET)
-    @ResponseBody
-    public List<RentOrder> rentOrderQuery() {
-        return rentOrderService.findAll();
-    }
-
-    /**
-     * 根据userId查询订单信息
-     * @return 满足条件的订单信息
-     */
-    @RequestMapping(value = "/rentOrder/queryRentOrderByUserId", method = RequestMethod.POST)
-    @ResponseBody
-    public List<RentOrder> queryType(@RequestBody RentOrder rentOrder) {
-        return rentOrderService.findRentOrderByUserId(rentOrder);
-    }
-
-    /**
-     * 根据orderId查找合同信息
-     * @param rentOrder
-     * @return Contract 合同信息
-     */
-    @RequestMapping(value = "/rentOrder/queryContractByRentOrderId", method = RequestMethod.POST)
-    @ResponseBody
-    public Contract queryContractByRentOrderId(@RequestBody RentOrder rentOrder) {
-        return rentOrderService.findContractByRentOrderId(rentOrder);
-    }
-    /**
      * 新增租客
      * @param tenant 租客信息
      * @return 新增是否成功
@@ -79,13 +40,9 @@ public class GreetingController {
     public String insert(@RequestBody Tenant tenant) {
         String flag = this.tenantService.insert(tenant);
         if(flag.equals("0")){
-            try{
-                String code=tenantService.findCodeByEmail(tenant).getCode();
-                iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://localhost:8081/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
-                return "0";
-            }catch (Exception e) {
-                return e.getMessage();
-            }
+            String code=tenantService.findCodeByEmail(tenant).getCode();
+            iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://localhost:8081/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
+            return "0";
         }
         else {
             return "1";
@@ -166,6 +123,47 @@ public class GreetingController {
     @ResponseBody
     public List<Room> queryType(@RequestBody Room room) {
         return roomService.findRoomByType(room);
+    }
+
+    /**
+     * 新增订单
+     * @param rentOrder 订单信息
+     */
+    @RequestMapping(value = "/rentOrder/insert", method = RequestMethod.POST)
+    @ResponseBody
+    public void insert(@RequestBody RentOrder rentOrder) {
+        rentOrderService.insert(rentOrder);
+    }
+
+    /**
+     * 查询所有订单信息
+     * @return 所有房间信息
+     */
+    @RequestMapping(value = "/rentOrder/queryAll", method = RequestMethod.GET)
+    @ResponseBody
+    public List<RentOrder> rentOrderQuery() {
+        return rentOrderService.findAll();
+    }
+
+    /**
+     * 根据userId查询订单信息
+     * @return 满足条件的订单信息
+     */
+    @RequestMapping(value = "/rentOrder/queryRentOrderByUserId", method = RequestMethod.POST)
+    @ResponseBody
+    public List<RentOrder> queryType(@RequestBody RentOrder rentOrder) {
+        return rentOrderService.findRentOrderByUserId(rentOrder);
+    }
+
+    /**
+     * 根据orderId查找合同信息
+     * @param rentOrder
+     * @return Contract 合同信息
+     */
+    @RequestMapping(value = "/rentOrder/queryContractByRentOrderId", method = RequestMethod.POST)
+    @ResponseBody
+    public Contract queryContractByRentOrderId(@RequestBody RentOrder rentOrder) {
+        return rentOrderService.findContractByRentOrderId(rentOrder);
     }
 
     @GetMapping("/greeting")
