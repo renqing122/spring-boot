@@ -1,7 +1,6 @@
 package com.heartsuit.showcase.domain;
 
 public class Operator {
-
     private String email; // 邮箱
     private String password; // 密码
     private String operatorName; // 姓名

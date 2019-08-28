@@ -20,7 +20,7 @@ public class TenantDao
 {
     private MongoTemplate mongoTemplate;
 
-    private static final String collectionName = "UA";
+    private static final String COLLECTION_NAME = "UA";
     @Autowired
     public TenantDao(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -37,12 +37,12 @@ public class TenantDao
         document.put("code", StringUtil.convertNullToEmpty(UserId+UserId));
         document.put("isActivation", StringUtil.convertNullToEmpty(tenant.getIsActivation()));
         document.put("telephone", StringUtil.convertNullToEmpty(tenant.getTelephone()));
-        mongoTemplate.getCollection(collectionName).insertOne(document);
+        mongoTemplate.getCollection(COLLECTION_NAME).insertOne(document);
 
     }
 
     public List<Tenant> findAll() {
-            FindIterable<Document> documents = mongoTemplate.getCollection(collectionName).find();
+            FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find();
             ArrayList<Tenant> tenants = new ArrayList<>();
             for (Document document : documents) {
                 Tenant tenant = new Tenant();
@@ -55,38 +55,38 @@ public class TenantDao
     public String checkCode(Tenant tenant){
         Document document = new Document();
         document.put("code", tenant.getCode());
-        long documents = mongoTemplate.getCollection(collectionName).countDocuments(document);
+        long documents = mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
         return documents > 0 ? "1":"0";
     }
     public void updateActivationStatus(Tenant tenant) {
         Document document = new Document();
         document.put("code", tenant.getCode());
-        FindIterable<Document> documents = mongoTemplate.getCollection(collectionName).find(document);
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
         Document first = documents.first();
         if (null != first) {
             first.put("isActivation", "1");
             first.put("code","");
-            mongoTemplate.getCollection(collectionName).replaceOne(document, first);
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
         }
     }
 
     public String findRepeatEmail(Tenant tenant) {
         Document document = new Document();
         document.put("email", tenant.getEmail());
-        long documents = mongoTemplate.getCollection(collectionName).countDocuments(document);
+        long documents = mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
         return documents > 0 ? "1":"0";
     }
 
     public long findTenantByEmail(Tenant tenant) {
         Document document = new Document();
         document.put("email", tenant.getEmail());
-        return mongoTemplate.getCollection(collectionName).countDocuments(document);
+        return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
     }
 
     public Tenant findCodeByEmail(Tenant tenant) {
         Document document = new Document();
         document.put("email", tenant.getEmail());
-        Document findDocument = mongoTemplate.getCollection(collectionName).find(document).first();
+        Document findDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
         Tenant findTenant = new Tenant();
         convertTenant(findDocument, findTenant);
         return findTenant;
@@ -95,7 +95,7 @@ public class TenantDao
     public Tenant findEmailByCode(Tenant tenant) {
         Document document = new Document();
         document.put("code", tenant.getCode());
-        Document findDocument = mongoTemplate.getCollection(collectionName).find(document).first();
+        Document findDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
         Tenant findTenant = new Tenant();
         convertTenant(findDocument, findTenant);
         return findTenant;
@@ -105,7 +105,7 @@ public class TenantDao
         Document document = new Document();
         document.put("email", tenant.getEmail());
         document.put("password", tenant.getPassword());
-        return mongoTemplate.getCollection(collectionName).countDocuments(document);
+        return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
     }
 
     public Tenant createTenantByCode(String code){

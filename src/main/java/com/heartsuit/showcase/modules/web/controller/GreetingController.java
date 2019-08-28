@@ -31,6 +31,46 @@ public class GreetingController {
     }
 
     /**
+     * 新增订单
+     * @param rentOrder 订单信息
+     */
+    @RequestMapping(value = "/rentOrder/insert", method = RequestMethod.POST)
+    @ResponseBody
+    public void insert(@RequestBody RentOrder rentOrder) {
+        rentOrderService.insert(rentOrder);
+    }
+
+    /**
+     * 查询所有订单信息
+     * @return 所有房间信息
+     */
+    @RequestMapping(value = "/rentOrder/queryAll", method = RequestMethod.GET)
+    @ResponseBody
+    public List<RentOrder> rentOrderQuery() {
+        return rentOrderService.findAll();
+    }
+
+    /**
+     * 根据userId查询订单信息
+     * @return 满足条件的订单信息
+     */
+    @RequestMapping(value = "/rentOrder/queryRentOrderByUserId", method = RequestMethod.POST)
+    @ResponseBody
+    public List<RentOrder> queryType(@RequestBody RentOrder rentOrder) {
+        return rentOrderService.findRentOrderByUserId(rentOrder);
+    }
+
+    /**
+     * 根据orderId查找合同信息
+     * @param rentOrder
+     * @return Contract 合同信息
+     */
+    @RequestMapping(value = "/rentOrder/queryContractByRentOrderId", method = RequestMethod.POST)
+    @ResponseBody
+    public Contract queryContractByRentOrderId(@RequestBody RentOrder rentOrder) {
+        return rentOrderService.findContractByRentOrderId(rentOrder);
+    }
+    /**
      * 新增租客
      * @param tenant 租客信息
      * @return 新增是否成功
@@ -123,47 +163,6 @@ public class GreetingController {
     @ResponseBody
     public List<Room> queryType(@RequestBody Room room) {
         return roomService.findRoomByType(room);
-    }
-
-    /**
-     * 新增订单
-     * @param rentOrder 订单信息
-     */
-    @RequestMapping(value = "/rentOrder/insert", method = RequestMethod.POST)
-    @ResponseBody
-    public void insert(@RequestBody RentOrder rentOrder) {
-        rentOrderService.insert(rentOrder);
-    }
-
-    /**
-     * 查询所有订单信息
-     * @return 所有房间信息
-     */
-    @RequestMapping(value = "/rentOrder/queryAll", method = RequestMethod.GET)
-    @ResponseBody
-    public List<RentOrder> rentOrderQuery() {
-        return rentOrderService.findAll();
-    }
-
-    /**
-     * 根据userId查询订单信息
-     * @return 满足条件的订单信息
-     */
-    @RequestMapping(value = "/rentOrder/queryRentOrderByUserId", method = RequestMethod.POST)
-    @ResponseBody
-    public List<RentOrder> queryType(@RequestBody RentOrder rentOrder) {
-        return rentOrderService.findRentOrderByUserId(rentOrder);
-    }
-
-    /**
-     * 根据orderId查找合同信息
-     * @param rentOrder
-     * @return Contract 合同信息
-     */
-    @RequestMapping(value = "/rentOrder/queryContractByRentOrderId", method = RequestMethod.POST)
-    @ResponseBody
-    public Contract queryContractByRentOrderId(@RequestBody RentOrder rentOrder) {
-        return rentOrderService.findContractByRentOrderId(rentOrder);
     }
 
     @GetMapping("/greeting")

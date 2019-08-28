@@ -38,7 +38,7 @@ public class TenantController
                 String flag = this.tenantService.insert(tenant);
                 if(flag.equals("0")){
                         String code=tenantService.findCodeByEmail(tenant).getCode();
-                        iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://localhost:8081/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
+                        iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://114.116.9.214:8666/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
                         return "0";
                 }
                 else {
@@ -50,7 +50,7 @@ public class TenantController
          * 查询所有租客
          * @return 所有租客信息
          */
-        @RequestMapping(value = "/queryAll", method = RequestMethod.GET)
+        @RequestMapping(value = "/queryall", method = RequestMethod.GET)
         @ResponseBody
         public List<Tenant> query() {
                 return tenantService.findAll();
