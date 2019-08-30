@@ -63,61 +63,43 @@ public class OperatorController {
         return operatorService.getId(operator).getOperatorId();
     }
 
-    /*/**
-     *
-     * @param tenantId
-     * @return
-     */
-    /*缺TenantDao里由tenantId查找tenant
+
     @RequestMapping(value = "/queryTenantByTenantId", method = RequestMethod.POST)
     @ResponseBody
-    public Tenant findTenantByTenantId(@RequestBody Tenant tenant){
-        return tenant;
-    }*/
+    public Tenant queryTenantByTenantId(@RequestBody Tenant tenant){
+        return operatorService.queryTenantByTenantId(tenant);
+    }
 
-    /*/**
-     *
-     * @param email
-     * @return
-     */
-    /*缺TenantDao里由email查找tenant
     @RequestMapping(value = "/queryTenantByEmail", method = RequestMethod.POST)
     @ResponseBody
-    public Tenant findTenantByEmail(@RequestBody Tenant tenant){
-        return tenant;
-    }*/
+    public Tenant queryTenantByEmail(@RequestBody Tenant tenant){
+        return operatorService.queryTenantByEmail(tenant);
+    }
 
-    /*/**
-     *
-     * @param tenantId level
-     */
-    /*Tenant缺level属性,缺TenantDao里由tenantId查找对应tenant并修改level
     @RequestMapping(value = "/updateLevelByTenantId", method = RequestMethod.POST)
     @ResponseBody
     public void updateLevelByTenantId(@RequestBody Tenant tenant){
-    }*/
+        operatorService.updateLevelByTenantId(tenant);
+    }
 
-    /*/**
-     *
-     * @param tenantId
-     * @return
-     */
-    /*缺RentOrderDao里由orderId查找rentOrder
+
     @RequestMapping(value = "/queryRentOrderByOrderId", method = RequestMethod.POST)
     @ResponseBody
     public RentOrder queryRentOrderByOrderId(@RequestBody RentOrder rentOrder){
-        return rentOrder;
-    }*/
+        return operatorService.queryRentOrderByOrderId(rentOrder);
+    }
 
-    /*/**
-     *
-     * @param orderId orderStatus
-     */
-    /*缺RentOrderDao里由orderId查找对应rentOrder并修改orderStatus
+    @RequestMapping(value = "/queryRentOrderListByOrderId", method = RequestMethod.POST)
+    @ResponseBody
+    public List<RentOrder> queryRentOrderListByOrderId(@RequestBody RentOrder rentOrder){
+        return operatorService.queryRentOrderListByOrderId(rentOrder);
+    }
+
     @RequestMapping(value = "/updateOrderStatusByOrderId", method = RequestMethod.POST)
     @ResponseBody
     public void updateOrderStatusByOrderId(@RequestBody RentOrder rentOrder){
-    }*/
+        operatorService.updateOrderStatusByOrderId(rentOrder);
+    }
 
     /**
      * 根据orderId创建合同
@@ -130,17 +112,6 @@ public class OperatorController {
         return rentOrderService.findContractByRentOrderId(rentOrder);
     }
 
-    /*/**
-     * 根据新合同修改orderId对应的订单
-     * @param rentOrder
-     * @return
-     */
-    /*缺RentOrderDao由orderId查找对应rentOrder并根据Contract的内容修改
-    @RequestMapping(value = "/updateRentOrderByContract", method = RequestMethod.POST)
-    @ResponseBody
-    public void updateRentOrderByContract(Contract contract){
-    }*/
-
     /**
      * 新增房间
      * @param room 房间信息
@@ -151,25 +122,12 @@ public class OperatorController {
         roomService.insert(room);
     }
 
-    /*/**
-     * 查找待审核的订单
-     * @return rentOrders
-     */
-    /*缺RentOrderDao里查找orderStatus为0的rentOrders
-    @RequestMapping(value = "/queryAllRentOrderByOrderStatus0", method = RequestMethod.GET)
-    @ResponseBody
-    public List<RentOrder> queryAllRentOrderByRentStatus0(){
-        return rentOrders;
-    }*/
 
-    /*/**
-     * 审核订单
-     */
-    /*缺RentOrderDao里根据orderId修改对应rentOrder的orderStatus
-    @RequestMapping(value = "/updateOrderStatusByOrderId", method = RequestMethod.POST)
+    @RequestMapping(value = "/queryAllRentOrderByOrderStatus", method = RequestMethod.POST)
     @ResponseBody
-    public List<RentOrder> queryAllRentOrderByRentStatus0(@RequestBody RentOrder rentOrder){
-    }*/
+    public List<RentOrder> queryAllRentOrderByRentStatus(@RequestBody RentOrder rentOrder){
+        return operatorService.queryAllRentOrderByRentStatus(rentOrder);
+    }
 
     @RequestMapping(value = "/insertRepairman",method = RequestMethod.POST)
     @ResponseBody
@@ -218,4 +176,29 @@ public class OperatorController {
     public void updateOperatorResponse(@RequestBody ComplainOrder complainOrder){
         operatorService.updateOperatorResponse(complainOrder);
     }
+
+    @RequestMapping(value = "/updateRoomInformationByRoomId",method = RequestMethod.POST)
+    @ResponseBody
+    public void updateRoomInformationByRoomId(@RequestBody Room room){
+        operatorService.updateRoomInformationByRoomId(room);
+    }
+
+    @RequestMapping(value = "/updateOperatorInformationByOperator",method = RequestMethod.POST)
+    @ResponseBody
+    public void updateOperatorInformationByOperator(@RequestBody Operator operator){
+        operatorService.updateOperatorInformationByOperator(operator);
+    }
+
+    @RequestMapping(value = "/queryOperatorByOperatorId",method = RequestMethod.POST)
+    @ResponseBody
+    public Operator queryOperatorByOperatorId(@RequestBody Operator operator){
+        return operatorService.queryOperatorByOperatorId(operator);
+    }
+
+    @RequestMapping(value = "/queryRoomByRoomId",method = RequestMethod.POST)
+    @ResponseBody
+    public Room queryRoomByRoomId(@RequestBody Room room){
+        return operatorService.queryRoomByRoomId(room);
+    }
+
 }

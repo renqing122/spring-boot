@@ -1,13 +1,7 @@
 package com.heartsuit.showcase.service.impl;
 
-import com.heartsuit.showcase.dao.ComplainOrderDao;
-import com.heartsuit.showcase.dao.FixOrderDao;
-import com.heartsuit.showcase.dao.OperatorDao;
-import com.heartsuit.showcase.dao.RepairmanDao;
-import com.heartsuit.showcase.domain.ComplainOrder;
-import com.heartsuit.showcase.domain.FixOrder;
-import com.heartsuit.showcase.domain.Operator;
-import com.heartsuit.showcase.domain.Repairman;
+import com.heartsuit.showcase.dao.*;
+import com.heartsuit.showcase.domain.*;
 import com.heartsuit.showcase.service.OperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,12 +14,18 @@ public class OperatorServiceImpl implements OperatorService {
     private RepairmanDao repairmanDao;
     private FixOrderDao fixOrderDao;
     private ComplainOrderDao complainOrderDao;
+    private TenantDao tenantDao;
+    private RentOrderDao rentOrderDao;
+    private RoomDao roomDao;
     @Autowired
-    public OperatorServiceImpl(OperatorDao operatorDao, RepairmanDao repairmanDao, FixOrderDao fixOrderDao, ComplainOrderDao complainOrderDao){
+    public OperatorServiceImpl(OperatorDao operatorDao, RepairmanDao repairmanDao, FixOrderDao fixOrderDao, ComplainOrderDao complainOrderDao, TenantDao tenantDao, RentOrderDao rentOrderDao, RoomDao roomDao){
         this.operatorDao = operatorDao;
         this.repairmanDao = repairmanDao;
         this.fixOrderDao = fixOrderDao;
         this.complainOrderDao = complainOrderDao;
+        this.tenantDao = tenantDao;
+        this.rentOrderDao = rentOrderDao;
+        this.roomDao = roomDao;
     }
 
     @Override
@@ -113,4 +113,60 @@ public class OperatorServiceImpl implements OperatorService {
     public void updateOperatorResponse(ComplainOrder complainOrder) {
         complainOrderDao.updateOrderStatusAndOperatorResponseByComplainOrderId(complainOrder);
     }
+
+    @Override
+    public Tenant queryTenantByTenantId(Tenant tenant) {
+        return tenantDao.getTenantByTenantId(tenant);
+    }
+
+    @Override
+    public Tenant queryTenantByEmail(Tenant tenant) {
+        return tenantDao.getTenantByEmail(tenant);
+    }
+
+    @Override
+    public void updateLevelByTenantId(Tenant tenant) {
+        tenantDao.updateTenantLevel(tenant);
+    }
+
+    @Override
+    public RentOrder queryRentOrderByOrderId(RentOrder rentOrder) {
+        return rentOrderDao.getRentOrderByOrderId(rentOrder);
+    }
+
+    @Override
+    public void updateOrderStatusByOrderId(RentOrder rentOrder) {
+        rentOrderDao.updateOrderStatusByOrderId(rentOrder);
+    }
+
+    @Override
+    public List<RentOrder> queryAllRentOrderByRentStatus(RentOrder rentOrder) {
+        return rentOrderDao.findRentOrderByOrderStatus(rentOrder);
+    }
+
+    @Override
+    public void updateRoomInformationByRoomId(Room room) {
+        roomDao.updateRoomInformation(room);
+    }
+
+    @Override
+    public void updateOperatorInformationByOperator(Operator operator) {
+        operatorDao.updateOperatorInformation(operator);
+    }
+
+    @Override
+    public Operator queryOperatorByOperatorId(Operator operator) {
+        return operatorDao.getOperatorByOperatorId(operator);
+    }
+
+    @Override
+    public Room queryRoomByRoomId(Room room) {
+        return roomDao.findRoomByRoomId(room);
+    }
+
+    @Override
+    public List<RentOrder> queryRentOrderListByOrderId(RentOrder rentOrder) {
+        return rentOrderDao.getRentOrderListByOrderId(rentOrder);
+    }
+
 }

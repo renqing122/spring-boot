@@ -9,6 +9,6 @@ public interface RoomService {
 
     List<Room> TenantFindAll();
     List<Room> OperatorFindAll();
-
+    void reSetRoomIsAbandoned(Room room);
     List<Room> findRoomByType(Room room);
 }

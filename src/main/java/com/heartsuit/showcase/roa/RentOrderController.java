@@ -72,4 +72,10 @@ public class RentOrderController {
     public void abandonedRentOrderByRentOrder(@RequestBody RentOrder rentOrder) {
         rentOrderService.abandonedRentOrder(rentOrder);
     }
+
+    @RequestMapping(value = "/reRentLongLeaseRoom", method = RequestMethod.POST)
+    @ResponseBody
+    public void reRentLongLeaseRoom(@RequestBody RentOrder rentOrder) {
+        rentOrderService.reRentLongLeaseRoom(rentOrder);
+    }
 }

@@ -15,11 +15,11 @@ public class SystemMasterServiceImpl implements SystemMasterService {
     }
     @Override
     public String login(SystemMaster systemMaster) {
-        if(systemMaster.getAccount().equals("admin")){
-            if(systemMaster.getPassword().equals("123456")){
-                return "0";
-            }
+        if(systemMaster.getAccount().equals("admin")&&systemMaster.getPassword().equals("123456")){
+            return "0";
         }
-        return "1";
+        else{
+            return "1";
+        }
     }
 }

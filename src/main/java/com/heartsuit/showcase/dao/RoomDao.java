@@ -60,6 +60,7 @@ public class RoomDao {
     public List<Room> tenantFindAll(Room room) {
         Document tenantIdDocument = new Document(); //创建一个document对象
         tenantIdDocument.put("isAvailable", room.getIsAvailable()); //给document设置isAvailable属性
+        tenantIdDocument.put("isAbandoned", room.getIsAbandoned());
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(tenantIdDocument); //根据具有tenantId属性的document对象进行查询
         List<Room> Rooms = new ArrayList<>();
         for (Document document : documents) {
@@ -91,6 +92,20 @@ public class RoomDao {
         }
     }
 
+    public void updateRoomInformation(Room room) {
+        Document document = new Document();
+        document.put("roomId", room.getRoomId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        Document first = documents.first();
+        if (null != first) {
+            first.put("name", room.getName());
+            first.put("price", room.getPrice());
+            first.put("address", room.getAddress());
+            first.put("description", room.getDescription());
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+        }
+    }
+
     /**
      * 根据房间类型查找房源信息
      * @param room
@@ -117,7 +132,21 @@ public class RoomDao {
         }
         return new Room();
     }
-
+    public void reSetIsAbandoned(Room room){
+        Room newRoom =new Room();
+        Document document = new Document();
+        document.put("roomId", room.getRoomId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        Document first = documents.first();
+        if (first != null) {
+            newRoom = convertRoom(first);
+            if(newRoom.getIsAbandoned().equals("0"))
+                first.put("isAbandoned", "1");
+            else
+                first.put("isAbandoned", "0");
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+        }
+    }
     private Room convertRoom(Document document) {
         Room room = new Room();
         room.setName(document.getString("name"));

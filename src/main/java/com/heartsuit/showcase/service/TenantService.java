@@ -1,5 +1,7 @@
 package com.heartsuit.showcase.service;
 
+import com.heartsuit.showcase.domain.ComplainOrder;
+import com.heartsuit.showcase.domain.FixOrder;
 import com.heartsuit.showcase.domain.Tenant;
 
 import java.util.List;
@@ -29,4 +31,14 @@ public interface TenantService {
     String findTenantIdByEmail(Tenant tenant);
 
     void updateTenantByLevel(Tenant tenant);
+
+    void insertFixOrder(FixOrder fixOrder);
+
+    void insertComplainOrder(ComplainOrder complainOrder);
+
+    void updateTenantInformationByOperator(Tenant tenant);
+
+    void updateTenantCommentByFixOrderId(FixOrder fixOrder);
+
+    Tenant queryTenantByTenantId(Tenant tenant);
 }

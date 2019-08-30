@@ -9,6 +9,7 @@ public class Room {
     private String description; //简介
     private String isAvailable; //是否被占用
     private String isAbandoned; //是否被禁用
+    private String picture;
 
     public String getRoomId() {
         return roomId;
@@ -74,6 +75,14 @@ public class Room {
         this.isAbandoned = isAbandoned;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
     @Override
     public String toString() {
         return "Room{" +
@@ -85,6 +94,7 @@ public class Room {
                 ", description='" + description + '\'' +
                 ", isAvailable='" + isAvailable + '\'' +
                 ", isAbandoned='" + isAbandoned + '\'' +
+                ", picture='" + picture + '\'' +
                 '}';
     }
 }

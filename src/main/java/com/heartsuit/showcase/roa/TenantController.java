@@ -1,5 +1,7 @@
 package com.heartsuit.showcase.roa;
 
+import com.heartsuit.showcase.domain.ComplainOrder;
+import com.heartsuit.showcase.domain.FixOrder;
 import com.heartsuit.showcase.domain.Tenant;
 import com.heartsuit.showcase.service.IMailService;
 import com.heartsuit.showcase.service.TenantService;
@@ -61,7 +63,7 @@ public class TenantController
          * @param code 租客
          * @return 更新是否成功
          */
-        @RequestMapping(value = "/checkCode",method = RequestMethod.POST)
+        @RequestMapping(value = "/checkCode",method = RequestMethod.GET)
         @ResponseBody
         public String updateActivationStatus(String code) {
                 tenantService.updateActivationStatus(tenantService.findEmailByCode(tenantService.createTenantByCode(code)));
@@ -85,6 +87,7 @@ public class TenantController
          * @param tenant
          * @return
          */
+        @CrossOrigin
         @RequestMapping(value = "/login", method = RequestMethod.POST)
         @ResponseBody
         public String login(@RequestBody Tenant tenant) {
@@ -118,6 +121,33 @@ public class TenantController
                 return tenantService.findTenantIdByEmail(tenant);
         }
 
-        
+        @RequestMapping(value = "/insertFixOrder",method = RequestMethod.POST)
+        @ResponseBody
+        public void insertFixOrder(@RequestBody FixOrder fixOrder) {
+                tenantService.insertFixOrder(fixOrder);
+        }
 
+        @RequestMapping(value = "/insertComplainOrder",method = RequestMethod.POST)
+        @ResponseBody
+        public void insertComplainOrder(@RequestBody ComplainOrder complainOrder) {
+                tenantService.insertComplainOrder(complainOrder);
+        }
+
+        @RequestMapping(value = "/updateTenantInformation",method = RequestMethod.POST)
+        @ResponseBody
+        public void updateTenantInformationByOperator(@RequestBody Tenant tenant){
+                tenantService.updateTenantInformationByOperator(tenant);
+        }
+
+        @RequestMapping(value = "/updateTenantCommentByFixOrderId",method = RequestMethod.POST)
+        @ResponseBody
+        public void updateTenantCommentByFixOrderId(@RequestBody FixOrder fixOrder){
+                tenantService.updateTenantCommentByFixOrderId(fixOrder);
+        }
+
+        @RequestMapping(value = "/queryTenantByTenantId",method = RequestMethod.POST)
+        @ResponseBody
+        public Tenant queryTenantByTenantId(@RequestBody Tenant tenant){
+                return tenantService.queryTenantByTenantId(tenant);
+        }
 }

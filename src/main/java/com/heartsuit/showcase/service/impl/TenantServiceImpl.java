@@ -1,6 +1,10 @@
 package com.heartsuit.showcase.service.impl;
 
+import com.heartsuit.showcase.dao.ComplainOrderDao;
+import com.heartsuit.showcase.dao.FixOrderDao;
 import com.heartsuit.showcase.dao.TenantDao;
+import com.heartsuit.showcase.domain.ComplainOrder;
+import com.heartsuit.showcase.domain.FixOrder;
 import com.heartsuit.showcase.domain.Tenant;
 import com.heartsuit.showcase.service.IMailService;
 import com.heartsuit.showcase.service.TenantService;
@@ -15,10 +19,14 @@ import java.util.List;
 @Component
 public class TenantServiceImpl implements TenantService{
     private TenantDao tenantDao;
+    private FixOrderDao fixOrderDao;
+    private ComplainOrderDao complainOrderDao;
 
     @Autowired
-    public TenantServiceImpl(TenantDao tenantDao) {
+    public TenantServiceImpl(TenantDao tenantDao, FixOrderDao fixOrderDao, ComplainOrderDao complainOrderDao) {
         this.tenantDao = tenantDao;
+        this.fixOrderDao = fixOrderDao;
+        this.complainOrderDao = complainOrderDao;
     }
 
     @Override
@@ -73,6 +81,31 @@ public class TenantServiceImpl implements TenantService{
     }
 
     @Override
+    public void insertFixOrder(FixOrder fixOrder) {
+        fixOrderDao.insert(fixOrder);
+    }
+
+    @Override
+    public void insertComplainOrder(ComplainOrder complainOrder) {
+        complainOrderDao.insert(complainOrder);
+    }
+
+    @Override
+    public void updateTenantInformationByOperator(Tenant tenant) {
+        tenantDao.updateTenantInformation(tenant);
+    }
+
+    @Override
+    public void updateTenantCommentByFixOrderId(FixOrder fixOrder) {
+        fixOrderDao.updateTenantCommentByFixOrderId(fixOrder);
+    }
+
+    @Override
+    public Tenant queryTenantByTenantId(Tenant tenant) {
+        return tenantDao.getTenantByTenantId(tenant);
+    }
+
+    @Override
     public Tenant findCodeByEmail(Tenant tenant)
     {
         return tenantDao.findCodeByEmail(tenant);
@@ -85,4 +118,5 @@ public class TenantServiceImpl implements TenantService{
         long tenantByEmailAndPassWord = tenantDao.findTenantByEmailAndPassWord(tenant);
         return tenantByEmail > 0 ? (tenantByEmailAndPassWord > 0 ? "0" : "1"): "2";
     }
+
 }

@@ -37,13 +37,14 @@ public class GreetingController {
      * @param tenant 租客信息
      * @return 新增是否成功
      */
+    @CrossOrigin
     @RequestMapping(value = "/tenant/insert", method = RequestMethod.POST)
     @ResponseBody
     public String insert(@RequestBody Tenant tenant) {
         String flag = this.tenantService.insert(tenant);
         if(flag.equals("0")){
             String code=tenantService.findCodeByEmail(tenant).getCode();
-            iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://114.116.9.214:8000/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
+            iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://114.116.9.214:8000/api/v1/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
             return "0"; //插入成功 发送邮件成功
         }
         else {
@@ -55,6 +56,7 @@ public class GreetingController {
      * 查询所有租客
      * @return 所有租客信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/tenant/queryAll", method = RequestMethod.GET)
     @ResponseBody
     public List<Tenant> query() {
@@ -66,7 +68,8 @@ public class GreetingController {
      * @param code 租客
      * @return 更新是否成功
      */
-    @RequestMapping(value = "/tenant/checkCode",method = RequestMethod.POST)
+    @CrossOrigin
+    @RequestMapping(value = "/tenant/checkCode",method = RequestMethod.GET)
     @ResponseBody
     public String updateActivationStatus(String code) {
         tenantService.updateActivationStatus(tenantService.findEmailByCode(tenantService.createTenantByCode(code)));
@@ -79,6 +82,7 @@ public class GreetingController {
      * @exception
      * @return
      */
+    @CrossOrigin
     @RequestMapping(value = "/tenant/checkEmail", method = RequestMethod.POST)
     @ResponseBody
     public String checkEmail(@RequestBody Tenant tenant) {
@@ -90,6 +94,7 @@ public class GreetingController {
      * @param tenant
      * @return
      */
+    @CrossOrigin
     @RequestMapping(value = "/tenant/login", method = RequestMethod.POST)
     @ResponseBody
     public String login(@RequestBody Tenant tenant) {
@@ -102,6 +107,7 @@ public class GreetingController {
      * @param tenant
      * @return
      */
+    @CrossOrigin
     @RequestMapping(value = "/tenant/updateTenantLevelByTenantId", method = RequestMethod.POST)
     @ResponseBody
     public void updateTenantLevel(@RequestBody Tenant tenant) {
@@ -113,10 +119,39 @@ public class GreetingController {
      * @param tenant 租客
      * @return 更新是否成功
      */
+    @CrossOrigin
     @RequestMapping(value = "/tenant/queryTenantIdByEmail",method = RequestMethod.POST)
     @ResponseBody
     public String updateActivationStatus(@RequestBody Tenant tenant) {
         return tenantService.findTenantIdByEmail(tenant);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/tenant/insertFixOrder",method = RequestMethod.POST)
+    @ResponseBody
+    public void tenantInsertFixOrder(@RequestBody FixOrder fixOrder) {
+        tenantService.insertFixOrder(fixOrder);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/tenant/insertComplainOrder",method = RequestMethod.POST)
+    @ResponseBody
+    public void tenantInsertComplainOrder(@RequestBody ComplainOrder complainOrder) {
+        tenantService.insertComplainOrder(complainOrder);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/tenant/updateTenantInformation",method = RequestMethod.POST)
+    @ResponseBody
+    public void tenantUpdateTenantInformation(@RequestBody Tenant tenant){
+        tenantService.updateTenantInformationByOperator(tenant);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/tenant/queryTenantByTenantId",method = RequestMethod.POST)
+    @ResponseBody
+    public Tenant tenantQueryTenantByTenantId(@RequestBody Tenant tenant){
+        return tenantService.queryTenantByTenantId(tenant);
     }
     ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
     //Room
@@ -124,6 +159,7 @@ public class GreetingController {
      * 新增房间
      * @param room 房间信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/room/insert", method = RequestMethod.POST)
     @ResponseBody
     public void insert(@RequestBody Room room) {
@@ -134,6 +170,7 @@ public class GreetingController {
      * 顾客查询所有房间
      * @return 所有房间信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/room/tenantQueryAll", method = RequestMethod.GET)
     @ResponseBody
     public List<Room> query1() {
@@ -144,6 +181,7 @@ public class GreetingController {
      * 客服查询所有房间
      * @return 所有房间信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/room/operatorQueryAll", method = RequestMethod.GET)
     @ResponseBody
     public List<Room> query2() {
@@ -155,17 +193,27 @@ public class GreetingController {
      * 根据type查询房间
      * @return 所有房间信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/room/queryRoomByType", method = RequestMethod.POST)
     @ResponseBody
     public List<Room> queryType(@RequestBody Room room) {
         return roomService.findRoomByType(room);
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/room/reSetRoomIsAbandoned", method = RequestMethod.POST)
+    @ResponseBody
+    public void roomReSetRoomIsAbandoned(@RequestBody Room room) {
+        roomService.reSetRoomIsAbandoned(room);
+    }
+
     ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
     //RentOrder
     /**
      * 新增订单
      * @param rentOrder 订单信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/rentOrder/insert", method = RequestMethod.POST)
     @ResponseBody
     public void insert(@RequestBody RentOrder rentOrder) {
@@ -176,6 +224,7 @@ public class GreetingController {
      * 查询所有订单信息
      * @return 所有房间信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/rentOrder/queryAll", method = RequestMethod.GET)
     @ResponseBody
     public List<RentOrder> query123() {
@@ -186,6 +235,7 @@ public class GreetingController {
      * tenant根据tenantId查询订单信息
      * @return 满足条件的订单信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/rentOrder/tenantQueryRentOrderByTenantId", method = RequestMethod.POST)
     @ResponseBody
     public List<RentOrder> queryType1(@RequestBody RentOrder rentOrder) {
@@ -196,6 +246,7 @@ public class GreetingController {
      * operator根据tenantId查询订单信息
      * @return 满足条件的订单信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/rentOrder/operatorQueryRentOrderByTenantId", method = RequestMethod.POST)
     @ResponseBody
     public List<RentOrder> queryType2(@RequestBody RentOrder rentOrder) {
@@ -206,16 +257,25 @@ public class GreetingController {
      * @param rentOrder
      * @return Contract 合同信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/rentOrder/queryContractByRentOrderId", method = RequestMethod.POST)
     @ResponseBody
     public Contract queryContractByRentOrderId(@RequestBody RentOrder rentOrder) {
         return rentOrderService.findContractByRentOrderId(rentOrder);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/rentOrder/abandonedRentOrderByRentOrder", method = RequestMethod.POST)
     @ResponseBody
     public void abandonedRentOrderByRentOrder(@RequestBody RentOrder rentOrder) {
         rentOrderService.abandonedRentOrder(rentOrder);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/rentOrder/reRentLongLeaseRoom", method = RequestMethod.POST)
+    @ResponseBody
+    public void rentOrderReRentLongLeaseRoom(@RequestBody RentOrder rentOrder) {
+        rentOrderService.reRentLongLeaseRoom(rentOrder);
     }
 
     ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
@@ -224,18 +284,21 @@ public class GreetingController {
      * @param systemMaster
      * @return “0”成功 “1”失败
      */
+    @CrossOrigin
     @RequestMapping(value = "/systemMaster/login", method = RequestMethod.POST)
     @ResponseBody
     public String systemMasterLogin(@RequestBody SystemMaster systemMaster){
         return systemMasterService.login(systemMaster);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/systemMaster/queryAllOperatorByActivationStatus0", method = RequestMethod.GET)
     @ResponseBody
     public List<Operator> systemMasterQueryAllOperatorByActivationStatus0(){
         return operatorService.findAllOperatorByActivationStatus0();
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/systemMaster/updateOperatorActivationStatus", method = RequestMethod.POST)
     @ResponseBody
     public String systemMasterUpdateOperatorActivationStatus(@RequestBody Operator operator){
@@ -250,6 +313,7 @@ public class GreetingController {
      * @param operator
      * @return 新增是否成功
      */
+    @CrossOrigin
     @RequestMapping(value = "/operator/insert", method = RequestMethod.POST)
     @ResponseBody
     public String operatorInsert(@RequestBody Operator operator){
@@ -260,6 +324,7 @@ public class GreetingController {
      * 查询所有客服
      * @return 所有客服信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/operator/queryAll", method = RequestMethod.GET)
     @ResponseBody
     public List<Operator> operatorQuery() {
@@ -271,175 +336,174 @@ public class GreetingController {
      * @param operator
      * @return “0”成功 “1”账号或密码错误 “2”账号不存在
      */
+    @CrossOrigin
     @RequestMapping(value = "/operator/login", method = RequestMethod.POST)
     @ResponseBody
     public String operatorLogin(@RequestBody Operator operator){
         return operatorService.login(operator);
     }
 
-    @RequestMapping(value = "/getId", method = RequestMethod.POST)
+    @CrossOrigin
+    @RequestMapping(value = "/operator/getId", method = RequestMethod.POST)
     @ResponseBody
-    public String getOperatorByEmailAndPassWord(@RequestBody Operator operator){
+    public String operatorGetOperatorByEmailAndPassWord(@RequestBody Operator operator){
         return operatorService.getId(operator).getOperatorId();
     }
 
-    /*/**
-     *
-     * @param tenantId
-     * @return
-     */
-    /*缺TenantDao里由tenantId查找tenant
-    @RequestMapping(value = "/queryTenantByTenantId", method = RequestMethod.POST)
-    @ResponseBody
-    public Tenant findTenantByTenantId(@RequestBody Tenant tenant){
-        return tenant;
-    }*/
 
-    /*/**
-     *
-     * @param email
-     * @return
-     */
-    /*缺TenantDao里由email查找tenant
-    @RequestMapping(value = "/queryTenantByEmail", method = RequestMethod.POST)
+    @CrossOrigin
+    @RequestMapping(value = "/operator/queryTenantByTenantId", method = RequestMethod.POST)
     @ResponseBody
-    public Tenant findTenantByEmail(@RequestBody Tenant tenant){
-        return tenant;
-    }*/
+    public Tenant operatorQueryTenantByTenantId(@RequestBody Tenant tenant){
+        return operatorService.queryTenantByTenantId(tenant);
+    }
 
-    /*/**
-     *
-     * @param tenantId level
-     */
-    /*Tenant缺level属性,缺TenantDao里由tenantId查找对应tenant并修改level
-    @RequestMapping(value = "/updateLevelByTenantId", method = RequestMethod.POST)
+    @CrossOrigin
+    @RequestMapping(value = "/operator/queryTenantByEmail", method = RequestMethod.POST)
     @ResponseBody
-    public void updateLevelByTenantId(@RequestBody Tenant tenant){
-    }*/
+    public Tenant operatorQueryTenantByEmail(@RequestBody Tenant tenant){
+        return operatorService.queryTenantByEmail(tenant);
+    }
 
-    /*/**
-     *
-     * @param tenantId
-     * @return
-     */
-    /*缺RentOrderDao里由orderId查找rentOrder
-    @RequestMapping(value = "/queryRentOrderByOrderId", method = RequestMethod.POST)
+    @CrossOrigin
+    @RequestMapping(value = "/operator/updateLevelByTenantId", method = RequestMethod.POST)
     @ResponseBody
-    public RentOrder queryRentOrderByOrderId(@RequestBody RentOrder rentOrder){
-        return rentOrder;
-    }*/
+    public void operatorUpdateLevelByTenantId(@RequestBody Tenant tenant){
+        operatorService.updateLevelByTenantId(tenant);
+    }
 
-    /*/**
-     *
-     * @param orderId orderStatus
-     */
-    /*缺RentOrderDao里由orderId查找对应rentOrder并修改orderStatus
-    @RequestMapping(value = "/updateOrderStatusByOrderId", method = RequestMethod.POST)
+    @CrossOrigin
+    @RequestMapping(value = "/operator/queryRentOrderByOrderId", method = RequestMethod.POST)
     @ResponseBody
-    public void updateOrderStatusByOrderId(@RequestBody RentOrder rentOrder){
-    }*/
+    public RentOrder operatorQueryRentOrderByOrderId(@RequestBody RentOrder rentOrder){
+        return operatorService.queryRentOrderByOrderId(rentOrder);
+    }
+
+    @RequestMapping(value = "/operator/queryRentOrderListByOrderId", method = RequestMethod.POST)
+    @ResponseBody
+    public List<RentOrder> operatorQueryRentOrderListByOrderId(@RequestBody RentOrder rentOrder){
+        return operatorService.queryRentOrderListByOrderId(rentOrder);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/operator/updateOrderStatusByOrderId", method = RequestMethod.POST)
+    @ResponseBody
+    public void operatorUpdateOrderStatusByOrderId(@RequestBody RentOrder rentOrder){
+        operatorService.updateOrderStatusByOrderId(rentOrder);
+    }
 
     /**
      * 根据orderId创建合同
      * @param rentOrder
      * @return
      */
+    @CrossOrigin
     @RequestMapping(value = "/operator/queryContractByOrderId", method = RequestMethod.POST)
     @ResponseBody
     public Contract operatorQueryContractByOrderId(@RequestBody RentOrder rentOrder){
         return rentOrderService.findContractByRentOrderId(rentOrder);
     }
 
-    /*/**
-     * 根据新合同修改orderId对应的订单
-     * @param rentOrder
-     * @return
-     */
-    /*缺RentOrderDao由orderId查找对应rentOrder并根据Contract的内容修改
-    @RequestMapping(value = "/updateRentOrderByContract", method = RequestMethod.POST)
-    @ResponseBody
-    public void updateRentOrderByContract(Contract contract){
-    }*/
-
     /**
      * 新增房间
      * @param room 房间信息
      */
+    @CrossOrigin
     @RequestMapping(value = "/operator/roomInsert", method = RequestMethod.POST)
     @ResponseBody
     public void operatorRoomInsert(@RequestBody Room room) {
         roomService.insert(room);
     }
 
-    /*/**
-     * 查找待审核的订单
-     * @return rentOrders
-     */
-    /*缺RentOrderDao里查找orderStatus为0的rentOrders
-    @RequestMapping(value = "/queryAllRentOrderByOrderStatus0", method = RequestMethod.GET)
+    @CrossOrigin
+    @RequestMapping(value = "/operator/queryAllRentOrderByOrderStatus", method = RequestMethod.POST)
     @ResponseBody
-    public List<RentOrder> queryAllRentOrderByRentStatus0(){
-        return rentOrders;
-    }*/
+    public List<RentOrder> operatorQueryAllRentOrderByRentStatus(@RequestBody RentOrder rentOrder){
+        return operatorService.queryAllRentOrderByRentStatus(rentOrder);
+    }
 
-    /*/**
-     * 审核订单
-     */
-    /*缺RentOrderDao里根据orderId修改对应rentOrder的orderStatus
-    @RequestMapping(value = "/updateOrderStatusByOrderId", method = RequestMethod.POST)
-    @ResponseBody
-    public List<RentOrder> queryAllRentOrderByRentStatus0(@RequestBody RentOrder rentOrder){
-    }*/
-
+    @CrossOrigin
     @RequestMapping(value = "/operator/insertRepairman",method = RequestMethod.POST)
     @ResponseBody
     public String operatorInsertRepairman(@RequestBody Repairman repairman){
         return operatorService.insertRepairman(repairman);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/operator/queryAllFixOrder",method = RequestMethod.GET)
     @ResponseBody
     public List<FixOrder> operatorQueryAllFixOrder(){
         return operatorService.queryAllFixOrder();
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/operator/queryFixOrderByOrderStatus",method = RequestMethod.POST)
     @ResponseBody
     public List<FixOrder> operatorQueryFixOrderByOrderStatus(@RequestBody FixOrder fixOrder){
         return operatorService.queryFixOrderByOrderStatus(fixOrder);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/operator/queryAllRepairman",method = RequestMethod.GET)
     @ResponseBody
     public List<Repairman> operatorQueryAllRepairman(){
         return operatorService.queryAllRepairman();
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/operator/queryRepairmanByArea",method = RequestMethod.POST)
     @ResponseBody
     public List<Repairman> operatorQueryRepairmanByArea(@RequestBody Repairman repairman){
         return operatorService.queryRepairmanByArea(repairman);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/operator/chooseRepairman",method = RequestMethod.POST)
     @ResponseBody
     public void operatorChooseRepairman(@RequestBody FixOrder fixOrder){
         operatorService.chooseRepairman(fixOrder);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/operator/queryComplainOrderByOrderStatus",method = RequestMethod.POST)
     @ResponseBody
     public List<ComplainOrder> operatorQueryComplainOrderByOrderStatus(@RequestBody ComplainOrder complainOrder){
         return operatorService.queryComplainOrderByOrderStatus(complainOrder);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/operator/updateOperatorResponse",method = RequestMethod.POST)
     @ResponseBody
     public void operatorUpdateOperatorResponse(@RequestBody ComplainOrder complainOrder){
         operatorService.updateOperatorResponse(complainOrder);
     }
 
+    @CrossOrigin
+    @RequestMapping(value = "/operator/updateRoomInformationByRoomId",method = RequestMethod.POST)
+    @ResponseBody
+    public void operatorUpdateRoomInformationByRoomId(@RequestBody Room room){
+        operatorService.updateRoomInformationByRoomId(room);
+    }
 
+    @RequestMapping(value = "/operator/updateOperatorInformationByOperator",method = RequestMethod.POST)
+    @ResponseBody
+    public void operatorUpdateOperatorInformationByOperator(@RequestBody Operator operator){
+        operatorService.updateOperatorInformationByOperator(operator);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/operator/queryOperatorByOperatorId",method = RequestMethod.POST)
+    @ResponseBody
+    public Operator operatorQueryOperatorByOperatorId(@RequestBody Operator operator){
+        return operatorService.queryOperatorByOperatorId(operator);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/operator/queryRoomByRoomId",method = RequestMethod.POST)
+    @ResponseBody
+    public Room queryRoomByRoomId(@RequestBody Room room){
+        return operatorService.queryRoomByRoomId(room);
+    }
     ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
 
     /**
@@ -447,30 +511,35 @@ public class GreetingController {
      * @param repairman
      * @return “0”成功 “1”账号或密码错误 “2”账号不存在
      */
+    @CrossOrigin
     @RequestMapping(value = "/repairman/login", method = RequestMethod.POST)
     @ResponseBody
     public String repairmanLogin(@RequestBody Repairman repairman){
         return repairmanService.login(repairman);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/repairman/getId", method = RequestMethod.POST)
     @ResponseBody
     public String repairmanGetRepairmanByEmailAndPassWord(@RequestBody Repairman repairman){
         return repairmanService.getId(repairman).getRepairmanId();
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/repairman/queryAllFixOrder", method = RequestMethod.POST)
     @ResponseBody
     public List<FixOrder> repairmanQueryAllFixOrder(@RequestBody FixOrder fixOrder){
         return repairmanService.queryAllFixOrder(fixOrder);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/repairman/queryFixOrderByOrderStatus", method = RequestMethod.POST)
     @ResponseBody
     public List<FixOrder> repairmanQueryFixOrderByOrderStatus(@RequestBody FixOrder fixOrder){
         return repairmanService.queryFixOrderByOrderStatus(fixOrder);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/repairman/updateOrderStatusByRepairmanId", method = RequestMethod.POST)
     @ResponseBody
     public void repairmanUpdateOrderStatusByRepairmanId(@RequestBody FixOrder fixOrder){

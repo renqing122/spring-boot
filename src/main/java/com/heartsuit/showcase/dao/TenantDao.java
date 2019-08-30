@@ -37,7 +37,7 @@ public class TenantDao
         document.put("code", StringUtil.convertNullToEmpty(tenantId+tenantId));
         document.put("isActivation", StringUtil.convertNullToEmpty(tenant.getIsActivation()));
         document.put("telephone", StringUtil.convertNullToEmpty(tenant.getTelephone()));
-        document.put("level", StringUtil.convertNullToEmpty(tenant.getLevel()));
+        document.put("level","5");
         mongoTemplate.getCollection(COLLECTION_NAME).insertOne(document);
     }
 
@@ -102,6 +102,25 @@ public class TenantDao
         return findTenant;
     }
 
+
+    public Tenant getTenantByTenantId(Tenant tenant) {
+        Document document = new Document();
+        document.put("tenantId", tenant.getTenantId());
+        Document findDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
+        Tenant findTenant = new Tenant();
+        convertTenant(findDocument, findTenant);
+        return findTenant;
+    }
+
+    public Tenant getTenantByEmail(Tenant tenant) {
+        Document document = new Document();
+        document.put("email", tenant.getEmail());
+        Document findDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
+        Tenant findTenant = new Tenant();
+        convertTenant(findDocument, findTenant);
+        return findTenant;
+    }
+
     public String findTenantIdByEmail(Tenant tenant) {
         Document document = new Document();
         document.put("email", tenant.getEmail());
@@ -139,6 +158,22 @@ public class TenantDao
         tenant.setCode(code);
         return tenant;
     }
+
+    public void updateTenantInformation(Tenant tenant) {
+        Document document = new Document();
+        document.put("tenantId", tenant.getTenantId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        Document first = documents.first();
+        if (null != first) {
+            first.put("tenantName", tenant.getTenantName());
+            first.put("password", tenant.getPassword());
+            first.put("age", tenant.getAge());
+            first.put("sex", tenant.getSex());
+            first.put("telephone", tenant.getTelephone());
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+        }
+    }
+
 
     public void convertTenant(Document document, Tenant tenant) {
         tenant.setTenantName(document.getString("tenantName"));

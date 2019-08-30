@@ -1,9 +1,6 @@
 package com.heartsuit.showcase.service;
 
-import com.heartsuit.showcase.domain.ComplainOrder;
-import com.heartsuit.showcase.domain.FixOrder;
-import com.heartsuit.showcase.domain.Operator;
-import com.heartsuit.showcase.domain.Repairman;
+import com.heartsuit.showcase.domain.*;
 
 import java.util.List;
 
@@ -22,4 +19,15 @@ public interface OperatorService {
     void chooseRepairman(FixOrder fixOrder);
     List<ComplainOrder> queryComplainOrderByOrderStatus(ComplainOrder complainOrder);
     void updateOperatorResponse(ComplainOrder complainOrder);
+    Tenant queryTenantByTenantId(Tenant tenant);
+    Tenant queryTenantByEmail(Tenant tenant);
+    void updateLevelByTenantId(Tenant tenant);
+    RentOrder queryRentOrderByOrderId(RentOrder rentOrder);
+    void updateOrderStatusByOrderId(RentOrder rentOrder);
+    List<RentOrder> queryAllRentOrderByRentStatus(RentOrder rentOrder);
+    void updateRoomInformationByRoomId(Room room);
+    void updateOperatorInformationByOperator(Operator operator);
+    Operator queryOperatorByOperatorId(Operator operator);
+    Room queryRoomByRoomId(Room room);
+    List<RentOrder> queryRentOrderListByOrderId(RentOrder rentOrder);
 }

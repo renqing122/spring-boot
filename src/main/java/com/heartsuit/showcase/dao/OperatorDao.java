@@ -104,11 +104,19 @@ public class OperatorDao {
         Document document = new Document();
         document.put("email", operator.getEmail());
         Document targetDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
-        Operator targetRepairman = new Operator();
-        convertOperator(targetDocument, targetRepairman);
-        return targetRepairman;
+        Operator targetOperator = new Operator();
+        convertOperator(targetDocument, targetOperator);
+        return targetOperator;
     }
 
+    public Operator getOperatorByOperatorId(Operator operator){
+        Document document = new Document();
+        document.put("operatorId", operator.getOperatorId());
+        Document targetDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
+        Operator targetOperator = new Operator();
+        convertOperator(targetDocument, targetOperator);
+        return targetOperator;
+    }
     public List<Operator> findAllOperatorByActivationStatus0() {
         Document targetDocument = new Document();
         targetDocument.put("isActivation", "0");
@@ -120,6 +128,21 @@ public class OperatorDao {
             operators.add(operator);
         }
         return operators;
+    }
+
+    public void updateOperatorInformation(Operator operator) {
+        Document document = new Document();
+        document.put("operatorId", operator.getOperatorId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        Document first = documents.first();
+        if (null != first) {
+            first.put("operatorName", operator.getOperatorName());
+            first.put("password", operator.getPassword());
+            first.put("age", operator.getAge());
+            first.put("sex", operator.getSex());
+            first.put("telephone", operator.getTelephone());
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+        }
     }
 
     /**

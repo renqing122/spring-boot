@@ -16,7 +16,9 @@ public interface RentOrderService {
 
     Contract findContractByRentOrderId(RentOrder rentOrder);
 
-    String calculateRentMoney(String rentTime,String roomId);
+    String calculateRentMoney(String rentTime,String roomId,String rentType);
 
     void abandonedRentOrder(RentOrder rentOrder);
+
+    void reRentLongLeaseRoom(RentOrder rentOrder);
 }

@@ -57,5 +57,14 @@ public class RoomController {
         return roomService.findRoomByType(room);
     }
 
+    /**
+     * 切换房间禁用状态
+     * @return 所有房间信息
+     */
+    @RequestMapping(value = "/reSetRoomIsAbandoned", method = RequestMethod.POST)
+    @ResponseBody
+    public void reSetRoomIsAbandoned(@RequestBody Room room) {
+        roomService.reSetRoomIsAbandoned(room);
+    }
 
 }

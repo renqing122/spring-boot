@@ -25,6 +25,7 @@ public class SystemMasterController {
      * @param systemMaster
      * @return “0”成功 “1”失败
      */
+    @CrossOrigin
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public String login(@RequestBody SystemMaster systemMaster){

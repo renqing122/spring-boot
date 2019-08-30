@@ -35,6 +35,11 @@ public class RoomServiceImpl implements RoomService {
         return roomDao.operatorFindAll();
     }
 
+    @Override
+    public void reSetRoomIsAbandoned(Room room) {
+        roomDao.reSetIsAbandoned(room);
+    }
+
 
     @Override
     public List<Room> findRoomByType(Room room) {
