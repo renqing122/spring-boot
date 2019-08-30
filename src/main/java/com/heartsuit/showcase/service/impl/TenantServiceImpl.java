@@ -56,10 +56,22 @@ public class TenantServiceImpl implements TenantService{
     public Tenant createTenantByCode(String code){
         return tenantDao.createTenantByCode(code);
     }
+
     @Override
     public Tenant findEmailByCode(Tenant tenant){
         return  tenantDao.findEmailByCode(tenant);
     }
+
+    @Override
+    public String findTenantIdByEmail(Tenant tenant) {
+        return tenantDao.findTenantIdByEmail(tenant);
+    }
+
+    @Override
+    public void updateTenantByLevel(Tenant tenant) {
+        tenantDao.updateTenantLevel(tenant);
+    }
+
     @Override
     public Tenant findCodeByEmail(Tenant tenant)
     {

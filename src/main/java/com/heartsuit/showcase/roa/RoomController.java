@@ -27,14 +27,25 @@ public class RoomController {
     }
 
     /**
-     * 查询所有房间
+     * 顾客查询所有房间
      * @return 所有房间信息
      */
-    @RequestMapping(value = "/queryAll", method = RequestMethod.GET)
+    @RequestMapping(value = "/tenantQueryAll", method = RequestMethod.GET)
     @ResponseBody
-    public List<Room> query() {
-        return roomService.findAll();
+    public List<Room> query1() {
+        return roomService.TenantFindAll();
     }
+
+    /**
+     * 客服查询所有房间
+     * @return 所有房间信息
+     */
+    @RequestMapping(value = "/operatorQueryAll", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Room> query2() {
+        return roomService.OperatorFindAll();
+    }
+
 
     /**
      * 根据type查询房间
@@ -45,4 +56,6 @@ public class RoomController {
     public List<Room> queryType(@RequestBody Room room) {
         return roomService.findRoomByType(room);
     }
+
+
 }

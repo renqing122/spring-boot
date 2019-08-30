@@ -25,4 +25,8 @@ public interface TenantService {
     Tenant createTenantByCode(String code);
 
     Tenant findEmailByCode(Tenant tenant);
+
+    String findTenantIdByEmail(Tenant tenant);
+
+    void updateTenantByLevel(Tenant tenant);
 }

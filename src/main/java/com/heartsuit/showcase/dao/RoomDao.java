@@ -29,10 +29,14 @@ public class RoomDao {
      */
     public void insert(Room room){
         Document document = new Document();
-        document.put("roomId", UUID.randomUUID().toString());
+        document.put("roomId", UUID.randomUUID().toString().replace("-",""));
         document.put("name", StringUtil.convertNullToEmpty(room.getName()));
         document.put("type", StringUtil.convertNullToEmpty(room.getType()));
         document.put("price", StringUtil.convertNullToEmpty(room.getPrice()));
+        document.put("address",StringUtil.convertNullToEmpty(room.getAddress()));
+        document.put("description",StringUtil.convertNullToEmpty(room.getDescription()));
+        document.put("isAvailable","0");
+        document.put("isAbandoned","0");
         mongoTemplate.getCollection(COLLECTION_NAME).insertOne(document);
     }
 
@@ -40,7 +44,7 @@ public class RoomDao {
      * 查找所有房源信息
      * @return room的list 所有房源信息
      */
-    public List<Room> findAll() {
+    public List<Room> operatorFindAll() {
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find();
         ArrayList<Room> rooms = new ArrayList<>();
         for (Document document : documents) {
@@ -49,18 +53,43 @@ public class RoomDao {
         }
         return rooms;
     }
+    /**
+     * 用户查找可用房源信息
+     * @return room的list 所有房源信息
+     */
+    public List<Room> tenantFindAll(Room room) {
+        Document tenantIdDocument = new Document(); //创建一个document对象
+        tenantIdDocument.put("isAvailable", room.getIsAvailable()); //给document设置isAvailable属性
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(tenantIdDocument); //根据具有tenantId属性的document对象进行查询
+        List<Room> Rooms = new ArrayList<>();
+        for (Document document : documents) {
+            Room resultRoom= convertRoom(document); //将查询出来的结果转换为java建模
+            Rooms.add(resultRoom);
+        }
+        return Rooms; //返回查询的所有Room对象
+    }
+//    //修改房间信息 二次迭代再补充
+//     public void updateIsAbandoned(Room room) {
+//        Document document = new Document();
+//        document.put("IsAbandoned",room.);
+//        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+//        Document first = documents.first();
+//        if (null != first) {
+//            first.put("isActivation", "1");
+//            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+//        }
+//    }
 
-    //修改房间信息 二次迭代再补充
-/*    public void updateActivationStatus(Room room) {
+    public void updateRoomNotAvailable(Room room) {
         Document document = new Document();
-        document.put("email", .getEmail());
+        document.put("roomId", room.getRoomId());
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
         Document first = documents.first();
         if (null != first) {
-            first.put("isActivation", "1");
+            first.put("isAvailable", "1");
             mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
         }
-    }*/
+    }
 
     /**
      * 根据房间类型查找房源信息
@@ -79,12 +108,26 @@ public class RoomDao {
         return rooms; //返回查询的所有Room对象
     }
 
+    public Room findRoomByRoomId(Room room) {
+        Document document = new Document();
+        document.put("roomId", room.getRoomId());
+        Document findDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
+        if (findDocument != null) {
+            return convertRoom(findDocument);
+        }
+        return new Room();
+    }
+
     private Room convertRoom(Document document) {
         Room room = new Room();
         room.setName(document.getString("name"));
         room.setPrice(document.getString("price"));
         room.setRoomId(document.getString("roomId"));
         room.setType(document.getString("type"));
+        room.setAddress(document.getString("address"));
+        room.setIsAbandoned(document.getString("isAbandoned"));
+        room.setDescription(document.getString("description"));
+        room.setIsAvailable(document.getString("isAvailable"));
         return room;
     }
 }

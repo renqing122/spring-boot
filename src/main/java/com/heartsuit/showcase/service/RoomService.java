@@ -7,8 +7,8 @@ import java.util.List;
 public interface RoomService {
     void insert(Room room);
 
-    List<Room> findAll();
-
+    List<Room> TenantFindAll();
+    List<Room> OperatorFindAll();
 
     List<Room> findRoomByType(Room room);
 }

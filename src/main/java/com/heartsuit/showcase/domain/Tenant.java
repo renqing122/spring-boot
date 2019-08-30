@@ -7,13 +7,14 @@ package com.heartsuit.showcase.domain;
 public class Tenant {
     private String email; // 邮箱
     private String password; // 密码
-    private String userName; // 用户名
+    private String tenantName; // 用户名
     private String age; // 年龄
     private String sex; // 性别
     private String telephone; // 手机号
     private String isActivation; // 是否激活
-    private String code; //激活码
-    private String userId; //用户ID
+    private String code; // 激活码
+    private String tenantId; // 用户ID
+    private String level; // 等级
 
     public String getCode() {
         return code;
@@ -23,12 +24,12 @@ public class Tenant {
         this.code = code;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getTenantId() {
+        return tenantId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     public String getEmail() {
@@ -47,12 +48,12 @@ public class Tenant {
         this.password = password;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getTenantName() {
+        return tenantName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
     }
 
     public String getAge() {
@@ -87,18 +88,27 @@ public class Tenant {
         this.telephone = telephone;
     }
 
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
         return "Tenant{" +
-                "userId='" + userId + '\'' +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", userName='" + userName + '\'' +
+                ", tenantName='" + tenantName + '\'' +
                 ", age='" + age + '\'' +
                 ", sex='" + sex + '\'' +
                 ", telephone='" + telephone + '\'' +
-                "code='" + code + '\'' +
                 ", isActivation='" + isActivation + '\'' +
+                ", code='" + code + '\'' +
+                ", tenantId='" + tenantId + '\'' +
+                ", level='" + level + '\'' +
                 '}';
     }
 }

@@ -38,15 +38,24 @@ public class RentOrderController {
     }
 
     /**
-     * 根据userId查询订单信息
+     * tenant根据tenantId查询订单信息
      * @return 满足条件的订单信息
      */
-    @RequestMapping(value = "/queryRentOrderByUserId", method = RequestMethod.POST)
+    @RequestMapping(value = "/tenantQueryRentOrderByTenantId", method = RequestMethod.POST)
     @ResponseBody
-    public List<RentOrder> queryType(@RequestBody RentOrder rentOrder) {
-        return rentOrderService.findRentOrderByUserId(rentOrder);
+    public List<RentOrder> queryType1(@RequestBody RentOrder rentOrder) {
+        return rentOrderService.TenantFindRentOrderByTenantId(rentOrder);
     }
 
+    /**
+     * operator根据tenantId查询订单信息
+     * @return 满足条件的订单信息
+     */
+    @RequestMapping(value = "/operatorQueryRentOrderByTenantId", method = RequestMethod.POST)
+    @ResponseBody
+    public List<RentOrder> queryType2(@RequestBody RentOrder rentOrder) {
+        return rentOrderService.OperatorFindRentOrderByTenantId(rentOrder);
+    }
     /**
      * 根据orderId查找合同信息
      * @param rentOrder
@@ -56,5 +65,11 @@ public class RentOrderController {
     @ResponseBody
     public Contract queryContractByRentOrderId(@RequestBody RentOrder rentOrder) {
         return rentOrderService.findContractByRentOrderId(rentOrder);
+    }
+
+    @RequestMapping(value = "/abandonedRentOrderByRentOrder", method = RequestMethod.POST)
+    @ResponseBody
+    public void abandonedRentOrderByRentOrder(@RequestBody RentOrder rentOrder) {
+        rentOrderService.abandonedRentOrder(rentOrder);
     }
 }

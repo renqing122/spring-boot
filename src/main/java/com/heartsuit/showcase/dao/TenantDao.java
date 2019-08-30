@@ -27,18 +27,18 @@ public class TenantDao
     }
     public void insert(Tenant tenant) {
         Document document = new Document();
-        String UserId=UUID.randomUUID().toString().replace("-","");
-        document.put("userId", StringUtil.convertNullToEmpty(UserId));
-        document.put("userName", StringUtil.convertNullToEmpty(tenant.getUserName()));
+        String tenantId=UUID.randomUUID().toString().replace("-","");
+        document.put("tenantId", StringUtil.convertNullToEmpty(tenantId));
+        document.put("tenantName", StringUtil.convertNullToEmpty(tenant.getTenantName()));
         document.put("age", StringUtil.convertNullToEmpty(tenant.getAge()));
         document.put("email", StringUtil.convertNullToEmpty(tenant.getEmail()));
         document.put("password", StringUtil.convertNullToEmpty(tenant.getPassword()));
         document.put("sex", StringUtil.convertNullToEmpty(tenant.getSex()));
-        document.put("code", StringUtil.convertNullToEmpty(UserId+UserId));
+        document.put("code", StringUtil.convertNullToEmpty(tenantId+tenantId));
         document.put("isActivation", StringUtil.convertNullToEmpty(tenant.getIsActivation()));
         document.put("telephone", StringUtil.convertNullToEmpty(tenant.getTelephone()));
+        document.put("level", StringUtil.convertNullToEmpty(tenant.getLevel()));
         mongoTemplate.getCollection(COLLECTION_NAME).insertOne(document);
-
     }
 
     public List<Tenant> findAll() {
@@ -80,6 +80,7 @@ public class TenantDao
     public long findTenantByEmail(Tenant tenant) {
         Document document = new Document();
         document.put("email", tenant.getEmail());
+        document.put("isActivation","1");
         return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
     }
 
@@ -101,11 +102,36 @@ public class TenantDao
         return findTenant;
     }
 
+    public String findTenantIdByEmail(Tenant tenant) {
+        Document document = new Document();
+        document.put("email", tenant.getEmail());
+        Document findDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(document).first();
+        Tenant findTenant = new Tenant();
+        if(findDocument!=null)
+        {
+            convertTenant(findDocument, findTenant);
+            return findTenant.getTenantId();
+        }
+        else
+            return null;
+    }
+
     public long findTenantByEmailAndPassWord(Tenant tenant) {
         Document document = new Document();
         document.put("email", tenant.getEmail());
         document.put("password", tenant.getPassword());
         return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
+    }
+
+    public void updateTenantLevel(Tenant tenant) {
+        Document document = new Document();
+        document.put("tenantId", tenant.getTenantId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        Document first = documents.first();
+        if (null != first) {
+            first.put("level", tenant.getLevel());
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+        }
     }
 
     public Tenant createTenantByCode(String code){
@@ -115,14 +141,15 @@ public class TenantDao
     }
 
     public void convertTenant(Document document, Tenant tenant) {
-        tenant.setUserName(document.getString("userName"));
+        tenant.setTenantName(document.getString("tenantName"));
         tenant.setAge(document.getString("age"));
         tenant.setEmail(document.getString("email"));
         tenant.setPassword(document.getString("password"));
         tenant.setSex(document.getString("sex"));
         tenant.setIsActivation(document.getString("isActivation"));
         tenant.setTelephone(document.getString("telephone"));
-        tenant.setUserId(document.getString("userId"));
+        tenant.setTenantId(document.getString("tenantId"));
         tenant.setCode(document.getString("code"));
+        tenant.setLevel(document.getString("level"));
     }
 }

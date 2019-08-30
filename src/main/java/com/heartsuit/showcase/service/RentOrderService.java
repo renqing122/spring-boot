@@ -10,8 +10,13 @@ public interface RentOrderService {
 
     List<RentOrder> findAll();
 
-    List<RentOrder> findRentOrderByUserId(RentOrder rentOrder);
+    List<RentOrder> TenantFindRentOrderByTenantId(RentOrder rentOrder);
+
+    List<RentOrder> OperatorFindRentOrderByTenantId(RentOrder rentOrder);
 
     Contract findContractByRentOrderId(RentOrder rentOrder);
 
+    String calculateRentMoney(String rentTime,String roomId);
+
+    void abandonedRentOrder(RentOrder rentOrder);
 }

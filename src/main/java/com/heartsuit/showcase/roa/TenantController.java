@@ -28,7 +28,7 @@ public class TenantController
                 this.iMailService = iMailService;
         }
         /**
-         * 新增租客
+         * 新增租客 注册
          * @param tenant 租客信息
          * @return 新增是否成功
          */
@@ -38,11 +38,11 @@ public class TenantController
                 String flag = this.tenantService.insert(tenant);
                 if(flag.equals("0")){
                         String code=tenantService.findCodeByEmail(tenant).getCode();
-                        iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://114.116.9.214:8666/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
-                        return "0";
+                        iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://114.116.9.214:8000/tenant/checkCode?code="+code+"\">激活请点击:"+code+"</a>");
+                        return "0"; //插入成功 发送邮件成功
                 }
                 else {
-                        return "1";
+                        return "1"; //插入失败 邮箱已存在
                 }
         }
 
@@ -50,7 +50,7 @@ public class TenantController
          * 查询所有租客
          * @return 所有租客信息
          */
-        @RequestMapping(value = "/queryall", method = RequestMethod.GET)
+        @RequestMapping(value = "/queryAll", method = RequestMethod.GET)
         @ResponseBody
         public List<Tenant> query() {
                 return tenantService.findAll();
@@ -61,11 +61,11 @@ public class TenantController
          * @param code 租客
          * @return 更新是否成功
          */
-        @RequestMapping(value = "/checkCode",method = RequestMethod.GET)
+        @RequestMapping(value = "/checkCode",method = RequestMethod.POST)
         @ResponseBody
         public String updateActivationStatus(String code) {
                 tenantService.updateActivationStatus(tenantService.findEmailByCode(tenantService.createTenantByCode(code)));
-                return "true";
+                return "您已成功激活！";
         }
 
         /**
@@ -74,7 +74,7 @@ public class TenantController
          * @exception
          * @return
          */
-        @RequestMapping(value = "/checkEmail", method = RequestMethod.GET)
+        @RequestMapping(value = "/checkEmail", method = RequestMethod.POST)
         @ResponseBody
         public String checkEmail(@RequestBody Tenant tenant) {
                 return tenantService.checkEmail(tenant);
@@ -95,4 +95,27 @@ public class TenantController
         public String greeting(@RequestBody HashMap<String, String> params) {
                 return "Hello DevOps. Welcome " + params.get("name");
         }
+
+        /**
+         * 修改level
+         * @param tenant
+         * @return
+         */
+        @RequestMapping(value = "/updateTenantLevelByTenantId", method = RequestMethod.POST)
+        @ResponseBody
+        public void updateTenantLevel(@RequestBody Tenant tenant) {
+                tenantService.updateTenantByLevel(tenant);
+        }
+
+        /**
+         * 根据tenantId找邮箱
+         * @param tenant 租客
+         * @return 更新是否成功
+         */
+        @RequestMapping(value = "/queryTenantIdByEmail",method = RequestMethod.POST)
+        @ResponseBody
+        public String updateActivationStatus(@RequestBody Tenant tenant) {
+                return tenantService.findTenantIdByEmail(tenant);
+        }
+
 }

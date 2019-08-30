@@ -23,9 +23,18 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> findAll() {
-        return roomDao.findAll();
+    public List<Room> TenantFindAll() {
+        Room room = new Room();
+        room.setIsAvailable("0");
+        room.setIsAbandoned("0");
+        return roomDao.tenantFindAll(room);
     }
+
+    @Override
+    public List<Room> OperatorFindAll() {
+        return roomDao.operatorFindAll();
+    }
+
 
     @Override
     public List<Room> findRoomByType(Room room) {

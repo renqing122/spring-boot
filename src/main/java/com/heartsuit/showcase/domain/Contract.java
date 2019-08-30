@@ -1,7 +1,7 @@
 package com.heartsuit.showcase.domain;
 
 public class Contract {
-    private String userId; //用户ID
+    private String tenantId; //用户ID
     private String roomId; //房间ID
     private String rentType; //租赁类型 短租为"短期租赁" 长租为"长期租赁"
     private String startDate; //租赁开始时间
@@ -9,12 +9,12 @@ public class Contract {
     private String rentTime; //租赁时长 短租单位为天 长租单位为月
     private String rentMoney; //租赁总租金
 
-    public String getUserId() {
-        return userId;
+    public String getTenantId() {
+        return tenantId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     public String getRoomId() {
@@ -68,7 +68,7 @@ public class Contract {
     @Override
     public String toString() {
         return "Contract{" +
-                "userId='" + userId + '\'' +
+                "tenantId='" + tenantId + '\'' +
                 ", roomId='" + roomId + '\'' +
                 ", rentType='" + rentType + '\'' +
                 ", startDate='" + startDate + '\'' +

@@ -26,10 +26,11 @@ spring:
 spring:
   mail:
     host: smtp.qq.com
-    username: 1019781382@qq.com
-    password: wzvxwopgkxgbbbab
+    username: 791917934@qq.com
+    password: lxbtxhawxhpnbbbb
+    port: 587
     default-encoding: UTF-8
-    from: 1019781382@qq.com
+    from: 791917934@qq.com
 ---
 spring:
   rabbitmq.addresses: 0.0.0.0
