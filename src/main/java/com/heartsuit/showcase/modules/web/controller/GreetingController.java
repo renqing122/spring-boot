@@ -1,12 +1,21 @@
 package com.heartsuit.showcase.modules.web.controller;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import com.heartsuit.showcase.domain.*;
 import com.heartsuit.showcase.service.*;
+import com.heartsuit.showcase.util.Result;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -19,8 +28,9 @@ public class GreetingController {
     private SystemMasterService systemMasterService;
     private OperatorService operatorService;
     private RepairmanService repairmanService;
+    private MongoTemplate mongoTemplate;
     @Autowired
-    public GreetingController(RoomService roomService,TenantService tenantService,IMailService iMailService,RentOrderService rentOrderService, SystemMasterService systemMasterService, OperatorService operatorService, RepairmanService repairmanService) {
+    public GreetingController(RoomService roomService,TenantService tenantService,IMailService iMailService,RentOrderService rentOrderService, SystemMasterService systemMasterService, OperatorService operatorService, RepairmanService repairmanService, MongoTemplate mongoTemplate) {
         this.roomService = roomService;
         this.tenantService = tenantService;
         this.iMailService = iMailService;
@@ -28,6 +38,8 @@ public class GreetingController {
         this.systemMasterService = systemMasterService;
         this.operatorService = operatorService;
         this.rentOrderService = rentOrderService;
+        this.repairmanService  = repairmanService;
+        this.mongoTemplate = mongoTemplate;
     }
 
  ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
@@ -40,7 +52,7 @@ public class GreetingController {
     @CrossOrigin
     @RequestMapping(value = "/tenant/insert", method = RequestMethod.POST)
     @ResponseBody
-    public String insert(@RequestBody Tenant tenant) {
+    public String insert(@RequestBody Tenant tenant) throws Exception {
         String flag = this.tenantService.insert(tenant);
         if(flag.equals("0")){
             String code=tenantService.findCodeByEmail(tenant).getCode();
@@ -97,7 +109,7 @@ public class GreetingController {
     @CrossOrigin
     @RequestMapping(value = "/tenant/login", method = RequestMethod.POST)
     @ResponseBody
-    public String login(@RequestBody Tenant tenant) {
+    public String login(@RequestBody Tenant tenant) throws Exception {
         return tenantService.login(tenant);
     }
 
@@ -122,7 +134,7 @@ public class GreetingController {
     @CrossOrigin
     @RequestMapping(value = "/tenant/queryTenantIdByEmail",method = RequestMethod.POST)
     @ResponseBody
-    public String updateActivationStatus(@RequestBody Tenant tenant) {
+    public String tenantQueryTenantIdByEmail(@RequestBody Tenant tenant) {
         return tenantService.findTenantIdByEmail(tenant);
     }
 
@@ -140,10 +152,16 @@ public class GreetingController {
         tenantService.insertComplainOrder(complainOrder);
     }
 
+    @RequestMapping(value = "/tenant/updateTenantCommentByFixOrderId",method = RequestMethod.POST)
+    @ResponseBody
+    public void tenantUpdateTenantCommentByFixOrderId(@RequestBody FixOrder fixOrder){
+        tenantService.updateTenantCommentByFixOrderId(fixOrder);
+    }
+
     @CrossOrigin
     @RequestMapping(value = "/tenant/updateTenantInformation",method = RequestMethod.POST)
     @ResponseBody
-    public void tenantUpdateTenantInformation(@RequestBody Tenant tenant){
+    public void tenantUpdateTenantInformation(@RequestBody Tenant tenant) throws Exception {
         tenantService.updateTenantInformationByOperator(tenant);
     }
 
@@ -152,6 +170,39 @@ public class GreetingController {
     @ResponseBody
     public Tenant tenantQueryTenantByTenantId(@RequestBody Tenant tenant){
         return tenantService.queryTenantByTenantId(tenant);
+    }
+
+    @RequestMapping(value = "/tenant/findComplainOrderByTenantId",method = RequestMethod.POST)
+    @ResponseBody
+    public List<ComplainOrder> tenantFindComplainOrderByTenantId(@RequestBody ComplainOrder complainOrder){
+        return tenantService.findComplainOrderByTenantId(complainOrder);
+    }
+
+    @RequestMapping(value = "/tenant/findFixOrderByTenantId",method = RequestMethod.POST)
+    @ResponseBody
+    public List<FixOrder> tenantFindFixOrderByTenantId(@RequestBody FixOrder fixOrder){
+        return tenantService.findFixOrderByTenantId(fixOrder);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/tenant/forgetPassword", method = RequestMethod.POST)
+    @ResponseBody
+    public String tenantForgetPassword(@RequestBody Tenant tenant) {
+        if(tenantService.forgetPassword(tenant).equals("0")){
+            String tenantId=tenantService.findCodeByEmail(tenant).getTenantId();
+            iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统密码重置","<a href=\"http://114.116.9.214:8000/api/v1/tenant/checkTenantId?tenantId="+tenantId+"\">重置请点击:"+tenantId+"</a>");
+            return "0";
+        }
+        else {
+            return "1";
+        }
+    }
+
+    @RequestMapping(value = "/tenant/checkTenantId",method = RequestMethod.GET)
+    @ResponseBody
+    public String tenantReSetPassword(String tenantId) throws Exception {
+        tenantService.reSetPasswordByTenantId(tenantService.createTenantByTenantId(tenantId));
+        return "您已重置密码，重置后密码为000000";
     }
     ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
     //Room
@@ -283,7 +334,7 @@ public class GreetingController {
      * 管理员登录
      * @param systemMaster
      * @return “0”成功 “1”失败
-     */
+     */////////////////////
     @CrossOrigin
     @RequestMapping(value = "/systemMaster/login", method = RequestMethod.POST)
     @ResponseBody
@@ -316,7 +367,7 @@ public class GreetingController {
     @CrossOrigin
     @RequestMapping(value = "/operator/insert", method = RequestMethod.POST)
     @ResponseBody
-    public String operatorInsert(@RequestBody Operator operator){
+    public String operatorInsert(@RequestBody Operator operator) throws Exception {
         return this.operatorService.insert(operator);
     }
 
@@ -339,7 +390,7 @@ public class GreetingController {
     @CrossOrigin
     @RequestMapping(value = "/operator/login", method = RequestMethod.POST)
     @ResponseBody
-    public String operatorLogin(@RequestBody Operator operator){
+    public String operatorLogin(@RequestBody Operator operator) throws Exception {
         return operatorService.login(operator);
     }
 
@@ -356,6 +407,12 @@ public class GreetingController {
     @ResponseBody
     public Tenant operatorQueryTenantByTenantId(@RequestBody Tenant tenant){
         return operatorService.queryTenantByTenantId(tenant);
+    }
+
+    @RequestMapping(value = "/operator/queryTenantListByTenantId", method = RequestMethod.POST)
+    @ResponseBody
+    public List<Tenant> operatorQueryTenantListByTenantId(@RequestBody Tenant tenant){
+        return operatorService.queryTenantListByTenantId(tenant);
     }
 
     @CrossOrigin
@@ -425,7 +482,7 @@ public class GreetingController {
     @CrossOrigin
     @RequestMapping(value = "/operator/insertRepairman",method = RequestMethod.POST)
     @ResponseBody
-    public String operatorInsertRepairman(@RequestBody Repairman repairman){
+    public String operatorInsertRepairman(@RequestBody Repairman repairman) throws Exception {
         return operatorService.insertRepairman(repairman);
     }
 
@@ -487,7 +544,7 @@ public class GreetingController {
 
     @RequestMapping(value = "/operator/updateOperatorInformationByOperator",method = RequestMethod.POST)
     @ResponseBody
-    public void operatorUpdateOperatorInformationByOperator(@RequestBody Operator operator){
+    public void operatorUpdateOperatorInformationByOperator(@RequestBody Operator operator) throws Exception {
         operatorService.updateOperatorInformationByOperator(operator);
     }
 
@@ -514,7 +571,7 @@ public class GreetingController {
     @CrossOrigin
     @RequestMapping(value = "/repairman/login", method = RequestMethod.POST)
     @ResponseBody
-    public String repairmanLogin(@RequestBody Repairman repairman){
+    public String repairmanLogin(@RequestBody Repairman repairman) throws Exception {
         return repairmanService.login(repairman);
     }
 
@@ -546,12 +603,58 @@ public class GreetingController {
         repairmanService.updateOrderStatusByRepairmanId(fixOrder);
     }
 
+    @RequestMapping(value = "/repairman/findFixOrderByFixOrderId", method = RequestMethod.POST)
+    @ResponseBody
+    public FixOrder repairmanFindFixOrderByFixOrderId(@RequestBody FixOrder fixOrder){
+        return repairmanService.findFixOrderByFixOrderId(fixOrder);
+    }
 
     ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
 
+    @PostMapping("/file/uploadImage")
+    @ResponseBody
+    public Result uploadImage(@RequestParam("picture") MultipartFile file){
+        if(file.isEmpty())
+            return new Result(false, "上传失败");;
+        String fileName = file.getOriginalFilename();
+        try {
+            Picture uploadFile = new Picture();
+            uploadFile.setName(fileName);
+            uploadFile.setCreatedTime(new Date());
+            uploadFile.setContent(new Binary(file.getBytes()));
+            uploadFile.setContentType(file.getContentType());
+            uploadFile.setSize(file.getSize());
 
+            Picture savedFile = mongoTemplate.save(uploadFile);
+            String url = "http://114.116.9.214:8000/api/v1/file/image/"+ savedFile.getId();
+            return new Result(true,url);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Result(false, "上传失败");
+        }
+    }
 
+    @GetMapping(value = "/file/image/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @ResponseBody
+    public byte[] image(@PathVariable String id) {
+        byte[] data = null;
+        Query query=new Query(Criteria.where("id").is(id));
+        Picture file = mongoTemplate.findOne(query, Picture.class);
+        if(file != null){
+            data = file.getContent().getData();
+        }
+        return data;
+    }
 
+    @GetMapping(value = "/file/queryAll")
+    @ResponseBody
+    public List<Picture> queryAll() {
+        Query query=new Query();
+        List<Picture> pictures = mongoTemplate.find(query, Picture.class);
+        return pictures;
+    }
+
+///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// ///////// /////////
 
     @GetMapping("/greeting")
     public String Active() {

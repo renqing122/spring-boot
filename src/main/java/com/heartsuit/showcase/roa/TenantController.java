@@ -36,7 +36,7 @@ public class TenantController
          */
         @RequestMapping(value = "/insert", method = RequestMethod.POST)
         @ResponseBody
-        public String insert(@RequestBody Tenant tenant) {
+        public String insert(@RequestBody Tenant tenant) throws Exception {
                 String flag = this.tenantService.insert(tenant);
                 if(flag.equals("0")){
                         String code=tenantService.findCodeByEmail(tenant).getCode();
@@ -90,8 +90,29 @@ public class TenantController
         @CrossOrigin
         @RequestMapping(value = "/login", method = RequestMethod.POST)
         @ResponseBody
-        public String login(@RequestBody Tenant tenant) {
+        public String login(@RequestBody Tenant tenant) throws Exception {
                 return tenantService.login(tenant);
+        }
+
+        @CrossOrigin
+        @RequestMapping(value = "/forgetPassword", method = RequestMethod.POST)
+        @ResponseBody
+        public String forgetPassword(@RequestBody Tenant tenant) {
+                if(tenantService.forgetPassword(tenant).equals("0")){
+                        String tenantId=tenantService.findCodeByEmail(tenant).getTenantId();
+                        iMailService.sendHtmlMail(tenant.getEmail(),"青年租房管理系统账户激活","<a href=\"http://114.116.9.214:8000/tenant/checkTenantId?tenantId="+tenantId+"\">重置请点击:"+tenantId+"</a>");
+                        return "0";
+                }
+                else {
+                        return "1";
+                }
+        }
+
+        @RequestMapping(value = "/checkTenantId",method = RequestMethod.GET)
+        @ResponseBody
+        public String reSetPassword(String tenantId) throws Exception {
+                tenantService.reSetPasswordByTenantId(tenantService.createTenantByTenantId(tenantId));
+                return "您已充值密码，重置后密码为000000！";
         }
 
         @PostMapping("/greeting")
@@ -135,7 +156,7 @@ public class TenantController
 
         @RequestMapping(value = "/updateTenantInformation",method = RequestMethod.POST)
         @ResponseBody
-        public void updateTenantInformationByOperator(@RequestBody Tenant tenant){
+        public void updateTenantInformationByOperator(@RequestBody Tenant tenant) throws Exception {
                 tenantService.updateTenantInformationByOperator(tenant);
         }
 
@@ -149,5 +170,23 @@ public class TenantController
         @ResponseBody
         public Tenant queryTenantByTenantId(@RequestBody Tenant tenant){
                 return tenantService.queryTenantByTenantId(tenant);
+        }
+
+        @RequestMapping(value = "/queryTenantListByTenantId",method = RequestMethod.POST)
+        @ResponseBody
+        public List<Tenant> queryTenantListByTenantId(@RequestBody Tenant tenant){
+                return tenantService.queryTenantListByTenantId(tenant);
+        }
+
+        @RequestMapping(value = "/findComplainOrderByTenantId",method = RequestMethod.POST)
+        @ResponseBody
+        public List<ComplainOrder> findComplainOrderByTenantId(@RequestBody ComplainOrder complainOrder){
+                return tenantService.findComplainOrderByTenantId(complainOrder);
+        }
+
+        @RequestMapping(value = "/findFixOrderByTenantId",method = RequestMethod.POST)
+        @ResponseBody
+        public List<FixOrder> findFixOrderByTenantId(@RequestBody FixOrder fixOrder){
+                return tenantService.findFixOrderByTenantId(fixOrder);
         }
 }

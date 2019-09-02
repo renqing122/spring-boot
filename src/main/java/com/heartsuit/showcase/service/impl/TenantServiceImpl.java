@@ -30,7 +30,7 @@ public class TenantServiceImpl implements TenantService{
     }
 
     @Override
-    public String insert(Tenant tenant) {
+    public String insert(Tenant tenant) throws Exception {
         if(tenantDao.findRepeatEmail(tenant).equals("0")){
             tenantDao.insert(tenant);
             return "0";
@@ -91,7 +91,7 @@ public class TenantServiceImpl implements TenantService{
     }
 
     @Override
-    public void updateTenantInformationByOperator(Tenant tenant) {
+    public void updateTenantInformationByOperator(Tenant tenant) throws Exception {
         tenantDao.updateTenantInformation(tenant);
     }
 
@@ -106,14 +106,48 @@ public class TenantServiceImpl implements TenantService{
     }
 
     @Override
+    public List<Tenant> queryTenantListByTenantId(Tenant tenant) {
+        return tenantDao.getTenantListByTenantId(tenant);
+    }
+
+    @Override
+    public String forgetPassword(Tenant tenant) {
+        if(tenantDao.findTenantByEmail(tenant)>0){
+            return "0";
+        }
+        else{
+            return "1";
+        }
+    }
+
+    @Override
+    public void reSetPasswordByTenantId(Tenant tenant) throws Exception {
+        tenantDao.reSetPasswordByTenantId(tenant);
+    }
+
+    @Override
+    public Tenant createTenantByTenantId(String tenantId) {
+        return tenantDao.createTenantByTenantId(tenantId);
+    }
+
+    @Override
+    public List<ComplainOrder> findComplainOrderByTenantId(ComplainOrder complainOrder) {
+        return complainOrderDao.findComplainOrderByTenantId(complainOrder);
+    }
+
+    @Override
+    public List<FixOrder> findFixOrderByTenantId(FixOrder fixOrder) {
+        return fixOrderDao.findFixOrderByTenantId(fixOrder);
+    }
+
+    @Override
     public Tenant findCodeByEmail(Tenant tenant)
     {
         return tenantDao.findCodeByEmail(tenant);
     }
 
     @Override
-    public String login(Tenant tenant)
-    {
+    public String login(Tenant tenant) throws Exception {
         long tenantByEmail = tenantDao.findTenantByEmail(tenant);
         long tenantByEmailAndPassWord = tenantDao.findTenantByEmailAndPassWord(tenant);
         return tenantByEmail > 0 ? (tenantByEmailAndPassWord > 0 ? "0" : "1"): "2";

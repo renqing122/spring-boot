@@ -1,6 +1,7 @@
 package com.heartsuit.showcase.dao;
 
 import com.heartsuit.showcase.domain.Operator;
+import com.heartsuit.showcase.util.AesEncryptUtils;
 import com.heartsuit.showcase.util.StringUtil;
 import com.mongodb.client.FindIterable;
 import org.bson.Document;
@@ -26,12 +27,12 @@ public class OperatorDao {
      * 插入客服信息
      * @param operator
      */
-    public void insert(Operator operator){
+    public void insert(Operator operator) throws Exception {
         Document document = new Document();
         document.put("operatorId", UUID.randomUUID().toString().replace("-",""));
         document.put("operatorName", StringUtil.convertNullToEmpty(operator.getOperatorName()));
         document.put("email", StringUtil.convertNullToEmpty(operator.getEmail()));
-        document.put("password", StringUtil.convertNullToEmpty(operator.getPassword()));
+        document.put("password", StringUtil.convertNullToEmpty( AesEncryptUtils.encrypt(operator.getPassword())));
         document.put("age", StringUtil.convertNullToEmpty(operator.getAge()));
         document.put("sex", StringUtil.convertNullToEmpty(operator.getSex()));
         document.put("telephone", StringUtil.convertNullToEmpty(operator.getTelephone()));
@@ -93,10 +94,10 @@ public class OperatorDao {
      * @param operator
      * @return 匹配上的账号条数
      */
-    public long findOperatorByEmailAndPassWord(Operator operator) {
+    public long findOperatorByEmailAndPassWord(Operator operator) throws Exception {
         Document document = new Document();
         document.put("email", operator.getEmail());
-        document.put("password", operator.getPassword());
+        document.put("password", AesEncryptUtils.encrypt(operator.getPassword()));
         return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
     }
 
@@ -130,14 +131,14 @@ public class OperatorDao {
         return operators;
     }
 
-    public void updateOperatorInformation(Operator operator) {
+    public void updateOperatorInformation(Operator operator) throws Exception {
         Document document = new Document();
         document.put("operatorId", operator.getOperatorId());
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
         Document first = documents.first();
         if (null != first) {
             first.put("operatorName", operator.getOperatorName());
-            first.put("password", operator.getPassword());
+            first.put("password", AesEncryptUtils.encrypt(operator.getPassword()));
             first.put("age", operator.getAge());
             first.put("sex", operator.getSex());
             first.put("telephone", operator.getTelephone());

@@ -20,7 +20,7 @@ public class RepairmanServiceImpl implements RepairmanService {
         this.fixOrderDao = fixOrderDao;
     }
     @Override
-    public String login(Repairman repairman) {
+    public String login(Repairman repairman) throws Exception {
         long repairmanByEmail = repairmanDao.findRepairmanByEmail(repairman);
         long repairmanByEmailAndPassword = repairmanDao.findRepairmanByEmailAndPassWord(repairman);
         return repairmanByEmail > 0 ? (repairmanByEmailAndPassword > 0 ? "0" : "1") : "2";
@@ -45,5 +45,10 @@ public class RepairmanServiceImpl implements RepairmanService {
     public void updateOrderStatusByRepairmanId(FixOrder fixOrder) {
         fixOrderDao.updateOrderStatusByFixOrderId(fixOrder);
         repairmanDao.minusTaskByRepairmanId(repairmanDao.createRepairmanByRepairmanId(fixOrder.getRepairmanId()));
+    }
+
+    @Override
+    public FixOrder findFixOrderByFixOrderId(FixOrder fixOrder) {
+        return fixOrderDao.findFixOrderByFixOrderId(fixOrder);
     }
 }

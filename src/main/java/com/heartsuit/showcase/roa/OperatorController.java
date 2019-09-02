@@ -32,7 +32,7 @@ public class OperatorController {
      */
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseBody
-    public String insert(@RequestBody Operator operator){
+    public String insert(@RequestBody Operator operator) throws Exception {
         return this.operatorService.insert(operator);
     }
 
@@ -53,7 +53,7 @@ public class OperatorController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public String login(@RequestBody Operator operator){
+    public String login(@RequestBody Operator operator) throws Exception {
         return operatorService.login(operator);
     }
 
@@ -95,6 +95,12 @@ public class OperatorController {
         return operatorService.queryRentOrderListByOrderId(rentOrder);
     }
 
+    @RequestMapping(value = "/queryTenantListByTenantId", method = RequestMethod.POST)
+    @ResponseBody
+    public List<Tenant> queryTenantListByTenantId(@RequestBody Tenant tenant){
+        return operatorService.queryTenantListByTenantId(tenant);
+    }
+
     @RequestMapping(value = "/updateOrderStatusByOrderId", method = RequestMethod.POST)
     @ResponseBody
     public void updateOrderStatusByOrderId(@RequestBody RentOrder rentOrder){
@@ -131,7 +137,7 @@ public class OperatorController {
 
     @RequestMapping(value = "/insertRepairman",method = RequestMethod.POST)
     @ResponseBody
-    public String insertRepairman(@RequestBody Repairman repairman){
+    public String insertRepairman(@RequestBody Repairman repairman) throws Exception {
         return operatorService.insertRepairman(repairman);
     }
 
@@ -185,7 +191,7 @@ public class OperatorController {
 
     @RequestMapping(value = "/updateOperatorInformationByOperator",method = RequestMethod.POST)
     @ResponseBody
-    public void updateOperatorInformationByOperator(@RequestBody Operator operator){
+    public void updateOperatorInformationByOperator(@RequestBody Operator operator) throws Exception {
         operatorService.updateOperatorInformationByOperator(operator);
     }
 

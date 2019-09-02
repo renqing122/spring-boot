@@ -25,7 +25,7 @@ public class PictureController {
     private MongoTemplate mongoTemplate;
     @PostMapping("/file/uploadImage")
     @ResponseBody
-    public String uploadImage(@RequestParam(value = "image") MultipartFile file){
+    public String uploadImage(@RequestParam("picture") MultipartFile file){
         if(file.isEmpty())
             return "1";
         String fileName = file.getOriginalFilename();
@@ -38,7 +38,7 @@ public class PictureController {
             uploadFile.setSize(file.getSize());
 
             Picture savedFile = mongoTemplate.save(uploadFile);
-            String url = "http://114.116.9.214:8080/file/image/"+ savedFile.getId();
+            String url = "http://114.116.9.214:8000/file/image/"+ savedFile.getId();
             return savedFile.getId();
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.heartsuit.showcase.dao;
 
+import com.heartsuit.showcase.util.AesEncryptUtils;
 import com.heartsuit.showcase.util.StringUtil;
 import com.mongodb.client.FindIterable;
 import org.bson.Document;
@@ -21,13 +22,13 @@ public class RepairmanDao {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public void insert(com.heartsuit.showcase.domain.Repairman repairman) {
+    public void insert(com.heartsuit.showcase.domain.Repairman repairman) throws Exception {
         Document document = new Document();
         document.put("repairmanId", StringUtil.convertNullToEmpty(UUID.randomUUID().toString().replace("-","")));
         document.put("name", StringUtil.convertNullToEmpty(repairman.getName()));
         document.put("age", StringUtil.convertNullToEmpty(repairman.getAge()));
         document.put("email", StringUtil.convertNullToEmpty(repairman.getEmail()));
-        document.put("password", StringUtil.convertNullToEmpty(repairman.getPassword()));
+        document.put("password", StringUtil.convertNullToEmpty(AesEncryptUtils.encrypt(repairman.getPassword())));
         document.put("sex", StringUtil.convertNullToEmpty(repairman.getSex()));
         document.put("area", StringUtil.convertNullToEmpty(repairman.getArea()));
         document.put("task", StringUtil.convertNullToEmpty("0"));
@@ -81,10 +82,10 @@ public class RepairmanDao {
         return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
     }
 
-    public long findRepairmanByEmailAndPassWord(com.heartsuit.showcase.domain.Repairman repairman) {
+    public long findRepairmanByEmailAndPassWord(com.heartsuit.showcase.domain.Repairman repairman) throws Exception {
         Document document = new Document();
         document.put("email", repairman.getEmail());
-        document.put("password", repairman.getPassword());
+        document.put("password", AesEncryptUtils.encrypt(repairman.getPassword()));
         return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
     }
 
@@ -94,9 +95,13 @@ public class RepairmanDao {
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
         Document first = documents.first();
         if (null != first) {
-            int task = Integer.getInteger(first.getString("task"));
+            System.out.println("1");
+            int task = Integer.valueOf(first.getString("task"));
+            System.out.println("2");
             task++;
+            System.out.println("3");
             first.put("task",String.valueOf(task));
+            System.out.println("4");
             mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
         }
     }
@@ -107,7 +112,7 @@ public class RepairmanDao {
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
         Document first = documents.first();
         if (null != first) {
-            int task = Integer.getInteger(first.getString("task"));
+            int task = Integer.valueOf(first.getString("task"));
             task--;
             first.put("task",String.valueOf(task));
             mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);

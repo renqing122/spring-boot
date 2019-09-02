@@ -29,7 +29,7 @@ public class OperatorServiceImpl implements OperatorService {
     }
 
     @Override
-    public String insert(Operator operator) {
+    public String insert(Operator operator) throws Exception {
         if(operatorDao.findRepeatEmail(operator).equals("0")){
             operatorDao.insert(operator);
             return "0";
@@ -45,7 +45,7 @@ public class OperatorServiceImpl implements OperatorService {
     }
 
     @Override
-    public String login(Operator operator) {
+    public String login(Operator operator) throws Exception {
         long operatorByEmail = operatorDao.findOperatorByEmail(operator);
         long operatorByEmailAndPassword = operatorDao.findOperatorByEmailAndPassWord(operator);
         return operatorByEmail > 0 ? (operatorByEmailAndPassword > 0 ? "0" : "1") : "2";
@@ -67,7 +67,7 @@ public class OperatorServiceImpl implements OperatorService {
     }
 
     @Override
-    public String insertRepairman(Repairman repairman) {
+    public String insertRepairman(Repairman repairman) throws Exception {
         if(repairmanDao.findRepeatEmail(repairman).equals("0")){
             repairmanDao.insert(repairman);
             return "导入成功";
@@ -150,7 +150,7 @@ public class OperatorServiceImpl implements OperatorService {
     }
 
     @Override
-    public void updateOperatorInformationByOperator(Operator operator) {
+    public void updateOperatorInformationByOperator(Operator operator) throws Exception {
         operatorDao.updateOperatorInformation(operator);
     }
 
@@ -167,6 +167,11 @@ public class OperatorServiceImpl implements OperatorService {
     @Override
     public List<RentOrder> queryRentOrderListByOrderId(RentOrder rentOrder) {
         return rentOrderDao.getRentOrderListByOrderId(rentOrder);
+    }
+
+    @Override
+    public List<Tenant> queryTenantListByTenantId(Tenant tenant) {
+        return tenantDao.getTenantListByTenantId(tenant);
     }
 
 }

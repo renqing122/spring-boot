@@ -39,7 +39,7 @@ public class RentOrderDao {
         if(rentOrder.getRentType().equals("长期"))
             document.put("endDate", dateUtil.addMonth(dateUtil.getCurrentDate(),rentOrder.getRentTime()));
         else
-            document.put("endDate", dateUtil.addDay(rentOrder.getStartDate(),rentOrder.getRentTime()));
+            document.put("endDate", dateUtil.addDay(dateUtil.getCurrentDate(),rentOrder.getRentTime()));
         document.put("rentTime", StringUtil.convertNullToEmpty(rentOrder.getRentTime()));
         document.put("rentMoney", StringUtil.convertNullToEmpty(rentOrder.getRentMoney()));
         document.put("orderStatus", "未审核");
@@ -98,6 +98,19 @@ public class RentOrderDao {
         return findRentOrder;
     }
 
+    public List<RentOrder> getRentOrderNotPaidAndRentByMonth(){
+        Document document = new Document();
+        document.put("rentType", "长期");
+        document.put("orderStatus", "未支付");
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        List<RentOrder> targetRentOrders = new ArrayList<>();
+        for (Document document1 : documents) {
+            RentOrder resultRentOrder= convertRentOrder(document1); //将查询出来的结果转换为java建模
+            targetRentOrders.add(resultRentOrder);
+        }
+        return targetRentOrders;
+    }
+
     public List<RentOrder> getRentOrderListByOrderId(RentOrder rentOrder) {
         Document document = new Document();
         document.put("orderId", rentOrder.getOrderId());
@@ -123,7 +136,7 @@ public class RentOrderDao {
 
     public List<RentOrder> findLongLeaseWithoutPayRentOrder(){
         Document document = new Document();
-        document.put("rentType","长期租赁");
+        document.put("rentType","长期");
         document.put("orderStatus", "未支付");
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
         List<RentOrder> RentOrders = new ArrayList<>();
@@ -133,6 +146,46 @@ public class RentOrderDao {
         }
         return RentOrders;
     }
+
+    public List<RentOrder> getRentOrderFinishAndRentByMonth(){
+        Document document = new Document();
+        document.put("rentType","长期");
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        List<RentOrder> RentOrders = new ArrayList<>();
+        for (Document document1 : documents) {
+            RentOrder resultRentOrder= convertRentOrder(document1); //将查询出来的结果转换为java建模
+            if(dateUtil.isLaterThanToday(resultRentOrder.getEndDate()).equals("before"))
+                RentOrders.add(resultRentOrder);
+        }
+        return RentOrders;
+    }
+
+    public List<RentOrder> getRentOrderNotPaidAndRentByDay(){
+        Document document = new Document();
+        document.put("rentType","短期");
+        document.put("orderStatus", "未支付");
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        List<RentOrder> RentOrders = new ArrayList<>();
+        for (Document document1 : documents) {
+            RentOrder resultRentOrder= convertRentOrder(document1); //将查询出来的结果转换为java建模
+            RentOrders.add(resultRentOrder);
+        }
+        return RentOrders;
+    }
+
+    public List<RentOrder> getRentOrderFinishAndRentByDay(){
+        Document document = new Document();
+        document.put("rentType","短期");
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        List<RentOrder> RentOrders = new ArrayList<>();
+        for (Document document1 : documents) {
+            RentOrder resultRentOrder= convertRentOrder(document1); //将查询出来的结果转换为java建模
+            if(dateUtil.isLaterThanToday(resultRentOrder.getEndDate()).equals("before"))
+                RentOrders.add(resultRentOrder);
+        }
+        return RentOrders;
+    }
+
 
     public void reRentUpdateEndDateAndRentTime(RentOrder rentOrder){
         Document document = new Document();

@@ -1,5 +1,6 @@
 package com.heartsuit.showcase.dao;
 
+import com.heartsuit.showcase.util.AesEncryptUtils;
 import com.mongodb.client.FindIterable;
 import com.heartsuit.showcase.domain.Tenant;
 import com.heartsuit.showcase.util.StringUtil;
@@ -25,14 +26,14 @@ public class TenantDao
     public TenantDao(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
-    public void insert(Tenant tenant) {
+    public void insert(Tenant tenant) throws Exception {
         Document document = new Document();
         String tenantId=UUID.randomUUID().toString().replace("-","");
         document.put("tenantId", StringUtil.convertNullToEmpty(tenantId));
         document.put("tenantName", StringUtil.convertNullToEmpty(tenant.getTenantName()));
         document.put("age", StringUtil.convertNullToEmpty(tenant.getAge()));
         document.put("email", StringUtil.convertNullToEmpty(tenant.getEmail()));
-        document.put("password", StringUtil.convertNullToEmpty(tenant.getPassword()));
+        document.put("password", StringUtil.convertNullToEmpty(AesEncryptUtils.encrypt(tenant.getPassword())));
         document.put("sex", StringUtil.convertNullToEmpty(tenant.getSex()));
         document.put("code", StringUtil.convertNullToEmpty(tenantId+tenantId));
         document.put("isActivation", StringUtil.convertNullToEmpty(tenant.getIsActivation()));
@@ -112,6 +113,19 @@ public class TenantDao
         return findTenant;
     }
 
+    public List<Tenant> getTenantListByTenantId(Tenant tenant) {
+        Document document = new Document();
+        document.put("tenantId", tenant.getTenantId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        List<Tenant> targetTenants = new ArrayList<>();
+        for (Document document1 : documents) {
+            Tenant resultTenant = new Tenant();
+            convertTenant(document1,resultTenant); //将查询出来的结果转换为java建模
+            targetTenants.add(resultTenant);
+        }
+        return targetTenants;
+    }
+
     public Tenant getTenantByEmail(Tenant tenant) {
         Document document = new Document();
         document.put("email", tenant.getEmail());
@@ -135,10 +149,10 @@ public class TenantDao
             return null;
     }
 
-    public long findTenantByEmailAndPassWord(Tenant tenant) {
+    public long findTenantByEmailAndPassWord(Tenant tenant) throws Exception {
         Document document = new Document();
         document.put("email", tenant.getEmail());
-        document.put("password", tenant.getPassword());
+        document.put("password", AesEncryptUtils.encrypt(tenant.getPassword()));
         return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments(document);
     }
 
@@ -153,20 +167,37 @@ public class TenantDao
         }
     }
 
+    public void reSetPasswordByTenantId(Tenant tenant) throws Exception {
+        Document document = new Document();
+        document.put("tenantId", tenant.getTenantId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        Document first = documents.first();
+        if (null != first) {
+            first.put("password", AesEncryptUtils.encrypt("000000"));
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+        }
+    }
+
     public Tenant createTenantByCode(String code){
         Tenant tenant = new Tenant();
         tenant.setCode(code);
         return tenant;
     }
 
-    public void updateTenantInformation(Tenant tenant) {
+    public Tenant createTenantByTenantId(String tenantId){
+        Tenant tenant = new Tenant();
+        tenant.setTenantId(tenantId);
+        return tenant;
+    }
+
+    public void updateTenantInformation(Tenant tenant) throws Exception {
         Document document = new Document();
         document.put("tenantId", tenant.getTenantId());
         FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
         Document first = documents.first();
         if (null != first) {
             first.put("tenantName", tenant.getTenantName());
-            first.put("password", tenant.getPassword());
+            first.put("password", AesEncryptUtils.encrypt(tenant.getPassword()));
             first.put("age", tenant.getAge());
             first.put("sex", tenant.getSex());
             first.put("telephone", tenant.getTelephone());

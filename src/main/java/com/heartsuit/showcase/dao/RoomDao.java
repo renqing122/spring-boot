@@ -37,6 +37,7 @@ public class RoomDao {
         document.put("description",StringUtil.convertNullToEmpty(room.getDescription()));
         document.put("isAvailable","0");
         document.put("isAbandoned","0");
+        document.put("picture",room.getPicture());
         mongoTemplate.getCollection(COLLECTION_NAME).insertOne(document);
     }
 
@@ -88,6 +89,17 @@ public class RoomDao {
         Document first = documents.first();
         if (null != first) {
             first.put("isAvailable", "1");
+            mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
+        }
+    }
+
+    public void updateRoomAvailable(Room room) {
+        Document document = new Document();
+        document.put("roomId", room.getRoomId());
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(document);
+        Document first = documents.first();
+        if (null != first) {
+            first.put("isAvailable", "0");
             mongoTemplate.getCollection(COLLECTION_NAME).replaceOne(document, first);
         }
     }
@@ -157,6 +169,7 @@ public class RoomDao {
         room.setIsAbandoned(document.getString("isAbandoned"));
         room.setDescription(document.getString("description"));
         room.setIsAvailable(document.getString("isAvailable"));
+        room.setPicture(document.getString("picture"));
         return room;
     }
 }

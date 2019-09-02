@@ -5,13 +5,13 @@ import com.heartsuit.showcase.domain.*;
 import java.util.List;
 
 public interface OperatorService {
-    String insert(Operator operator);
+    String insert(Operator operator) throws Exception;
     List<Operator> findAll();
-    String login(Operator operator);
+    String login(Operator operator) throws Exception;
     Operator getId(Operator operator);
     void updateOperatorActivationStatus(Operator operator);
     List<Operator> findAllOperatorByActivationStatus0();
-    String insertRepairman(Repairman repairman);
+    String insertRepairman(Repairman repairman) throws Exception;
     List<FixOrder> queryAllFixOrder();
     List<FixOrder> queryFixOrderByOrderStatus(FixOrder fixOrder);
     List<Repairman> queryAllRepairman();
@@ -26,8 +26,9 @@ public interface OperatorService {
     void updateOrderStatusByOrderId(RentOrder rentOrder);
     List<RentOrder> queryAllRentOrderByRentStatus(RentOrder rentOrder);
     void updateRoomInformationByRoomId(Room room);
-    void updateOperatorInformationByOperator(Operator operator);
+    void updateOperatorInformationByOperator(Operator operator) throws Exception;
     Operator queryOperatorByOperatorId(Operator operator);
     Room queryRoomByRoomId(Room room);
     List<RentOrder> queryRentOrderListByOrderId(RentOrder rentOrder);
+    List<Tenant> queryTenantListByTenantId(Tenant tenant);
 }

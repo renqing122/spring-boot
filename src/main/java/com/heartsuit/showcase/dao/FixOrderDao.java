@@ -52,7 +52,7 @@ public class FixOrderDao {
     public List<FixOrder> findFixOrderByOrderStatus(FixOrder fixOrder){
         Document targetDocument = new Document();
         targetDocument.put("orderStatus", fixOrder.getOrderStatus());
-        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find();
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(targetDocument);
         ArrayList<FixOrder> fixOrders = new ArrayList<>();
         for (Document document : documents) {
             FixOrder newFixOrder = new FixOrder();
@@ -60,6 +60,15 @@ public class FixOrderDao {
             fixOrders.add(newFixOrder);
         }
         return fixOrders;
+    }
+
+    public FixOrder findFixOrderByFixOrderId(FixOrder fixOrder){
+        Document targetDocument = new Document();
+        targetDocument.put("fixOrderId", fixOrder.getFixOrderId());
+        Document findDocument = mongoTemplate.getCollection(COLLECTION_NAME).find(targetDocument).first();
+        FixOrder findFixOrder = new FixOrder();
+        convertFixOrder(findDocument,findFixOrder);
+        return findFixOrder;
     }
 
     public List<FixOrder> findFixOrderByTenantId(FixOrder fixOrder){
@@ -78,7 +87,7 @@ public class FixOrderDao {
     public List<FixOrder> findFixOrderByRepairmanId(FixOrder fixOrder){
         Document targetDocument = new Document();
         targetDocument.put("repairmanId", fixOrder.getRepairmanId());
-        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find();
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(targetDocument);
         ArrayList<FixOrder> fixOrders = new ArrayList<>();
         for (Document document : documents) {
             FixOrder newFixOrder = new FixOrder();
@@ -92,7 +101,7 @@ public class FixOrderDao {
         Document targetDocument = new Document();
         targetDocument.put("repairmanId", fixOrder.getRepairmanId());
         targetDocument.put("orderStatus", fixOrder.getOrderStatus());
-        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find();
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(targetDocument);
         ArrayList<FixOrder> fixOrders = new ArrayList<>();
         for (Document document : documents) {
             FixOrder newFixOrder = new FixOrder();

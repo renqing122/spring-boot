@@ -24,7 +24,7 @@ public class RepairmanController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public String login(@RequestBody Repairman repairman){
+    public String login(@RequestBody Repairman repairman) throws Exception {
         return repairmanService.login(repairman);
     }
 
@@ -44,6 +44,12 @@ public class RepairmanController {
     @ResponseBody
     public List<FixOrder> queryFixOrderByOrderStatus(@RequestBody FixOrder fixOrder){
         return repairmanService.queryFixOrderByOrderStatus(fixOrder);
+    }
+
+    @RequestMapping(value = "/findFixOrderByFixOrderId", method = RequestMethod.POST)
+    @ResponseBody
+    public FixOrder findFixOrderByFixOrderId(@RequestBody FixOrder fixOrder){
+        return repairmanService.findFixOrderByFixOrderId(fixOrder);
     }
 
     @RequestMapping(value = "/updateOrderStatusByRepairmanId", method = RequestMethod.POST)

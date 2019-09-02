@@ -40,7 +40,7 @@ public class ComplainOrderDao {
     public List<ComplainOrder> findComplainOrderByOrderStatus(ComplainOrder complainOrder){
         Document targetDocument = new Document();
         targetDocument.put("orderStatus", complainOrder.getOrderStatus());
-        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find();
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(targetDocument);
         ArrayList<ComplainOrder> complainOrders = new ArrayList<>();
         for (Document document : documents) {
             ComplainOrder newFixOrder = new ComplainOrder();
@@ -53,7 +53,7 @@ public class ComplainOrderDao {
     public List<ComplainOrder> findComplainOrderByTenantId(ComplainOrder complainOrder){
         Document targetDocument = new Document();
         targetDocument.put("tenantId", complainOrder.getTenantId());
-        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find();
+        FindIterable<Document> documents = mongoTemplate.getCollection(COLLECTION_NAME).find(targetDocument);
         ArrayList<ComplainOrder> complainOrders = new ArrayList<>();
         for (Document document : documents) {
             ComplainOrder targetComplainOrder = new ComplainOrder();
